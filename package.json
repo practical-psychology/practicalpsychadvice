@@ -1,7 +1,7 @@
 {
   "name": "practical-psychology-store",
   "version": "1.0.0",
-  "description": "Practical Psychology Advice - Official 10-book series store with Stripe integration",
+  "description": "Practical Psychology Advice - Official book store with Stripe integration",
   "private": true,
   "scripts": {
     "dev": "next dev",
