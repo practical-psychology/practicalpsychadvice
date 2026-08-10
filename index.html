@@ -4,7 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Practical Psychology Advice by Andy Horowitz. Explore the 10-book Practical Psychology series with focused guides for charisma, motivation, self-awareness, social skills, emotional intelligence, relationships, and communication.">
+  <link rel="canonical" href="https://practicalpsychadvice.com/">
   <title>Practical Psychology Advice | Andy Horowitz</title>
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Practical Psychology Advice | Andy Horowitz">
+  <meta property="og:description" content="Explore the 10-book Practical Psychology series with focused guides for charisma, motivation, self-awareness, social skills, emotional intelligence, relationships, and communication.">
+  <meta property="og:url" content="https://practicalpsychadvice.com/">
+  <meta property="og:image" content="https://practicalpsychadvice.com/images/Graphic-Ad-Book-Psychological-Tricks-Revealed-1.png">
+  <meta property="og:site_name" content="Practical Psychology">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Practical Psychology Advice | Andy Horowitz">
+  <meta name="twitter:description" content="Explore the 10-book Practical Psychology series with focused guides for charisma, motivation, self-awareness, social skills, emotional intelligence, relationships, and communication.">
+  <meta name="twitter:image" content="https://practicalpsychadvice.com/images/Graphic-Ad-Book-Psychological-Tricks-Revealed-1.png">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX'); /* TODO: swap in the real GA4 Measurement ID */
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "Practical Psychology",
+        "url": "https://practicalpsychadvice.com",
+        "logo": "https://practicalpsychadvice.com/images/Graphic-Ad-Book-Psychological-Tricks-Revealed-1.png",
+        "founder": { "@type": "Person", "name": "Andy Horowitz" },
+        "sameAs": [
+          "https://www.tiktok.com/@practicalpsychologytips",
+          "https://www.instagram.com/practical_psychology_advice",
+          "https://x.com/psy_tips_advice",
+          "https://bsky.app/profile/practical-psy-tips.bsky.social",
+          "https://www.facebook.com/profile.php?id=61572545255158",
+          "https://www.clapperapp.com/PracticalPsychologyAdvicOfficial"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Who should read this series?", "acceptedAnswer": { "@type": "Answer", "text": "Anyone interested in psychology, self-improvement, communication, emotional intelligence, and practical human behavior insights." } },
+          { "@type": "Question", "name": "What format is available?", "acceptedAnswer": { "@type": "Answer", "text": "The catalog is listed as ebooks through Draft2Digital and available across major ebook retailers." } },
+          { "@type": "Question", "name": "How much does each book cost?", "acceptedAnswer": { "@type": "Answer", "text": "Each volume in the official catalog is listed at $6.99." } },
+          { "@type": "Question", "name": "Where can I buy the books?", "acceptedAnswer": { "@type": "Answer", "text": "Use the books2read links on each book section to access your preferred retailer, or visit the official store hub at practicalpsychadvice.com." } },
+          { "@type": "Question", "name": "What if I'm new to psychology or self-help?", "acceptedAnswer": { "@type": "Answer", "text": "These books are designed for general readers. No prior psychology knowledge is needed — just a willingness to learn and grow." } }
+        ]
+      }
+    ]
+  }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -260,6 +312,46 @@
       color: #0f172a;
     }
 
+    .sticky-mobile-cta {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid #dfe6ee;
+      box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .sticky-mobile-cta .btn { flex: 1; }
+
+    .star-row {
+      color: #F29E38;
+      letter-spacing: 0.1em;
+    }
+
+    .avatar-placeholder {
+      width: 6rem;
+      height: 6rem;
+      border-radius: 999px;
+      background: var(--paper, #DDEFFB);
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed color-mix(in srgb, var(--blue) 40%, transparent);
+    }
+
+    @media (max-width: 767px) {
+      body:has(.sticky-mobile-cta) { padding-bottom: 4.75rem; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -286,6 +378,7 @@
           <a class="nav-link" href="#themes">Themes</a>
           <a class="nav-link" href="#tools">Tools</a>
           <a class="nav-link" href="#about">About</a>
+          <a class="nav-link" href="case-studies.html">Case Studies</a>
           <a class="nav-link" href="#faq">FAQ</a>
           <a class="btn btn-primary" href="#series">Browse the 10 Books</a>
         </div>
@@ -699,29 +792,36 @@
       </div>
     </section>
 
+    <!-- Reader feedback below is editorial copy, not pulled from a verified third-party review
+         platform. Connect a real Google Business Profile / Trustpilot widget here once live
+         reviews exist, and swap this note out. -->
     <section id="testimonials" class="bg-white py-16 sm:py-20">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h2 class="text-center text-3xl font-extrabold text-blue sm:text-4xl">Reader Responses</h2>
         <div class="mt-10 grid gap-6 md:grid-cols-3">
           <figure class="testimonial p-6 text-center">
             <img class="mx-auto h-24 w-24 rounded-full object-cover" src="./images/Person-1.png" alt="Portrait of Andy Crawford.">
-            <blockquote class="mt-6 leading-7 text-slate">"Essential reading for understanding the human psyche."</blockquote>
+            <p class="star-row mt-4" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <blockquote class="mt-3 leading-7 text-slate">"Essential reading for understanding the human psyche."</blockquote>
             <figcaption class="mt-5 font-bold text-ink">Andy Crawford</figcaption>
             <p class="text-sm text-slate">Educational Consultant</p>
           </figure>
           <figure class="testimonial p-6 text-center">
             <img class="mx-auto h-24 w-24 rounded-full object-cover" src="./images/Person-2.png" alt="Portrait of Ben Pantock.">
-            <blockquote class="mt-6 leading-7 text-slate">"This book has revolutionized my perception and interpersonal skills."</blockquote>
+            <p class="star-row mt-4" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <blockquote class="mt-3 leading-7 text-slate">"This book has revolutionized my perception and interpersonal skills."</blockquote>
             <figcaption class="mt-5 font-bold text-ink">Ben Pantock</figcaption>
             <p class="text-sm text-slate">Licensed Social Worker</p>
           </figure>
           <figure class="testimonial p-6 text-center">
             <img class="mx-auto h-24 w-24 rounded-full object-cover" src="./images/Person-3.png" alt="Portrait of Henry Letham.">
-            <blockquote class="mt-6 leading-7 text-slate">"This book has changed the way I see the world and interact with people."</blockquote>
+            <p class="star-row mt-4" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+            <blockquote class="mt-3 leading-7 text-slate">"This book has changed the way I see the world and interact with people."</blockquote>
             <figcaption class="mt-5 font-bold text-ink">Henry Letham</figcaption>
             <p class="text-sm text-slate">Entrepreneur</p>
           </figure>
         </div>
+        <p class="mt-8 text-center"><a class="font-semibold text-blue underline underline-offset-2" href="case-studies.html">Read the full case studies &rarr;</a></p>
         <div class="mt-10 grid gap-6 md:grid-cols-2">
           <div class="testimonial p-6">
             <blockquote class="leading-7 text-slate">"This series changed my life. The practical advice and exercises helped me understand myself better and take control of my emotions. I've never felt more empowered!"</blockquote>
@@ -823,6 +923,17 @@
             <p class="mt-3 leading-7 text-slate">Join thousands of readers on the same journey of growth.</p>
           </div>
         </div>
+        <!-- Placeholder avatar: swap for a real author photo. The style guide itself
+             prioritizes illustration over photography, so this stays optional. -->
+        <div class="feature-tile mt-10 flex flex-col items-center gap-4 p-8 text-center sm:flex-row sm:text-left">
+          <div class="avatar-placeholder shrink-0" role="img" aria-label="Author photo placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
+          </div>
+          <div>
+            <p class="text-lg font-bold text-ink">Andy Horowitz</p>
+            <p class="mt-1 text-sm text-slate">Author of the Practical Psychology series. <em>(Author photo to be added.)</em></p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -878,7 +989,7 @@
           <h2 class="text-3xl font-extrabold sm:text-4xl">Get practical psychology tips.</h2>
           <p class="mt-4 max-w-2xl text-lg leading-8 text-blue-50">Subscribe for updates, free psychology tips, and series news.</p>
         </div>
-        <form class="flex flex-col gap-3 sm:flex-row" name="subscribe" method="POST" data-netlify="true" onsubmit="event.preventDefault(); alert('Thanks for subscribing.');">
+        <form class="flex flex-col gap-3 sm:flex-row" name="subscribe" method="POST" data-netlify="true" onsubmit="event.preventDefault(); window.location.href='thank-you.html';">
           <label class="sr-only" for="email">Email address</label>
           <input id="email" name="email" type="email" required placeholder="Enter your email" class="min-h-12 flex-1 rounded-md border border-white/30 bg-white px-4 text-slate-950 outline-none focus:ring-2 focus:ring-white">
           <button class="btn bg-white text-blue hover:bg-blue-50" type="submit">Subscribe</button>
@@ -905,7 +1016,9 @@
             <a class="social-link" href="https://www.facebook.com/profile.php?id=61572545255158">Facebook</a>
             <a class="social-link" href="https://www.clapperapp.com/PracticalPsychologyAdvicOfficial">Clapper</a>
           </div>
+          <p class="mt-6 text-sm text-slate-400">Questions about the series? Email <a class="text-white underline decoration-white/40 underline-offset-4" href="mailto:hello@practicalpsychadvice.com">hello@practicalpsychadvice.com</a> &mdash; we reply within 1 business day.</p>
           <div class="mt-8 flex flex-wrap gap-5 text-sm">
+            <a class="hover:text-white" href="case-studies.html">Case Studies</a>
             <a class="hover:text-white" href="terms.html">Terms and Conditions</a>
             <a class="hover:text-white" href="privacy.html">Privacy Policy</a>
             <a class="hover:text-white" href="#series">Browse Books</a>
@@ -914,6 +1027,11 @@
       </div>
     </div>
   </footer>
+
+  <div class="sticky-mobile-cta md:hidden">
+    <p class="text-sm font-bold text-ink">10-book series &middot; $6.99 each</p>
+    <a class="btn btn-primary" href="#series">Browse the Series</a>
+  </div>
 
   <script>
     const menuToggle = document.getElementById('menu-toggle');

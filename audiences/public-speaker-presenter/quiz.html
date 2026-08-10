@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Rate how you currently show up as a speaker — presence, clarity, persuasion, and composure under pressure. A free self-assessment from the Practical Psychology series.">
+  <link rel="canonical" href="https://practicalpsychadvice.com/audiences/public-speaker-presenter/quiz.html">
+  <title>Stage Presence & Speaking Confidence Self-Assessment | Practical Psychology</title>
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Stage Presence & Speaking Confidence Self-Assessment | Practical Psychology">
+  <meta property="og:description" content="Rate how you currently show up as a speaker — presence, clarity, persuasion, and composure under pressure. A free self-assessment from the Practical Psychology series.">
+  <meta property="og:url" content="https://practicalpsychadvice.com/audiences/public-speaker-presenter/quiz.html">
+  <meta property="og:image" content="https://practicalpsychadvice.com/images/Graphic-Ad-Book-Psychological-Tricks-Revealed-1.png">
+  <meta property="og:site_name" content="Practical Psychology">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Stage Presence & Speaking Confidence Self-Assessment | Practical Psychology">
+  <meta name="twitter:description" content="Rate how you currently show up as a speaker — presence, clarity, persuasion, and composure under pressure. A free self-assessment from the Practical Psychology series.">
+  <meta name="twitter:image" content="https://practicalpsychadvice.com/images/Graphic-Ad-Book-Psychological-Tricks-Revealed-1.png">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: '#004990',
+            midnight: '#233852',
+            green: '#44AA44',
+            gray: '#545454',
+            paper: '#F5F5F5',
+            lightblue: '#DDEFFB',
+            beige: '#EAE0D5'
+          },
+          fontFamily: {
+            heading: ['Lato', 'Arial', 'sans-serif'],
+            body: ['Montserrat', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/brand.css">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "name": "Practical Psychology", "url": "https://practicalpsychadvice.com", "logo": "https://practicalpsychadvice.com/images/Graphic-Ad-Book-Psychological-Tricks-Revealed-1.png", "founder": {"@type": "Person", "name": "Andy Horowitz"}, "sameAs": ["https://www.tiktok.com/@practicalpsychologytips", "https://www.instagram.com/practical_psychology_advice", "https://x.com/psy_tips_advice", "https://bsky.app/profile/practical-psy-tips.bsky.social", "https://www.facebook.com/profile.php?id=61572545255158", "https://www.clapperapp.com/PracticalPsychologyAdvicOfficial"]}]}</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX'); /* TODO: swap in the real GA4 Measurement ID */
+  </script>
+  
+</head>
+
+<body class="antialiased bg-paper">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+      <a href="index.html" class="font-heading text-lg font-extrabold text-dark-blue sm:text-xl">Practical Psychology</a>
+      <button id="menu-toggle" class="md:hidden rounded-md border border-slate-300 px-3 py-2 font-body font-semibold text-midnight" type="button" aria-expanded="false" aria-controls="site-menu">Menu</button>
+      <div id="site-menu" class="hidden absolute left-0 right-0 top-full border-b border-slate-200 bg-white px-4 py-4 md:static md:flex md:border-0 md:bg-transparent md:p-0">
+        <div class="flex flex-col gap-4 font-body md:flex-row md:items-center md:gap-6">
+          <a class="nav-link" href="index.html#catalog">10 Books</a>
+          <a class="nav-link" href="quiz.html">Self-Assessment</a>
+          <a class="nav-link" href="case-studies.html">Case Studies</a>
+          <a class="nav-link" href="index.html#about">About</a>
+          <a class="nav-link" href="index.html#faq">FAQ</a>
+          <a class="nav-link" href="../index.html">Other Readers</a>
+          <a class="btn btn-cta" href="index.html#catalog">Browse the Series</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
+    <h1 class="h1">Stage Presence & Speaking Confidence Self-Assessment</h1>
+    <p class="mt-5 font-body text-lg leading-8 text-gray">Rate how you currently show up as a speaker — presence, clarity, persuasion, and composure under pressure.</p>
+    <p class="mt-3 font-body text-sm text-gray">Rate each statement from 1 (rarely true) to 3 (usually true). Nothing is stored or submitted &mdash; this runs entirely in your browser.</p>
+
+    <div id="questions" class="mt-10 space-y-5"></div>
+    <button onclick="calculateScore()" class="btn btn-cta mt-4">Calculate My Score</button>
+    <div id="result" class="card mt-8 p-6 font-body text-lg leading-8 text-midnight" role="status"></div>
+
+    <div class="card mt-10 p-6">
+      <h2 class="h3">Recommended next step</h2>
+      <p class="mt-3 font-body leading-7 text-gray">Based on what public speaker and presenters tell us, start with <strong class="text-dark-blue">The Secrets of Charisma</strong> &mdash; A focused guide to presence, confidence, likability, and the social cues that make people feel seen.</p>
+      <a class="btn btn-cta mt-4" href="book-1.html">View The Secrets of Charisma</a>
+    </div>
+  </main>
+
+  <footer class="bg-midnight py-12 text-slate-300">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <h2 class="font-heading text-2xl font-extrabold text-white">Practical Psychology Advice</h2>
+          <p class="mt-3 max-w-xl font-body leading-7 text-slate-300">Official website and store hub: <a class="text-white underline decoration-white/40 underline-offset-4" href="https://practicalpsychadvice.com">practicalpsychadvice.com</a></p>
+          <p class="mt-2 font-body text-sm text-slate-400">Practical Psychology by Andy Horowitz. Copyright 2026.</p>
+          <p class="mt-4 font-body text-sm"><a class="text-white underline decoration-white/40 underline-offset-4" href="../index.html">See all 6 reader profiles &rarr;</a></p>
+        </div>
+        <div>
+          <p class="font-heading font-bold text-white">Connect with us</p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a class="social-link" href="https://www.tiktok.com/@practicalpsychologytips">TikTok</a>
+            <a class="social-link" href="https://www.instagram.com/practical_psychology_advice">Instagram</a>
+            <a class="social-link" href="https://x.com/psy_tips_advice">X</a>
+            <a class="social-link" href="https://bsky.app/profile/practical-psy-tips.bsky.social">Bluesky</a>
+            <a class="social-link" href="https://www.facebook.com/profile.php?id=61572545255158">Facebook</a>
+            <a class="social-link" href="https://www.clapperapp.com/PracticalPsychologyAdvicOfficial">Clapper</a>
+          </div>
+          <p class="mt-6 font-body text-sm text-slate-400">Questions about the series? Email <a class="text-white underline decoration-white/40 underline-offset-4" href="mailto:hello@practicalpsychadvice.com">hello@practicalpsychadvice.com</a> &mdash; we reply within 1 business day.</p>
+          <div class="mt-8 flex flex-wrap gap-5 font-body text-sm">
+            <a class="hover:text-white" href="case-studies.html">Case Studies</a>
+            <a class="hover:text-white" href="terms.html">Terms and Conditions</a>
+            <a class="hover:text-white" href="privacy.html">Privacy Policy</a>
+            <a class="hover:text-white" href="index.html#catalog">Browse Books</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  <div class="sticky-mobile-cta md:hidden">
+    <p class="font-heading text-sm font-bold text-midnight">$6.99 &middot; ebook</p>
+    <a class="btn btn-cta" href="#questions">Calculate My Score</a>
+  </div>
+  <script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const siteMenu = document.getElementById('site-menu');
+    menuToggle.addEventListener('click', () => {
+      const isOpen = !siteMenu.classList.toggle('hidden');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+    siteMenu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (window.matchMedia('(max-width: 767px)').matches) {
+          siteMenu.classList.add('hidden');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+  </script>
+  <script>
+    const questions = ['I maintain eye contact with my interlocutor during conversation.', 'I have good posture, facial expressions, and body language.', 'I radiate optimism and positivity.', 'I believe in my abilities.', 'I feel comfortable being the center of attention.', 'I can express my thoughts and ideas clearly and concisely.', 'I am not afraid to defend my point of view.', 'I speak clearly, distinctly, and loud enough to be heard and understood.', 'I ask relevant questions to deepen the conversation.', 'I explain complex topics or ideas and summarize key points.', 'I use images, metaphors, and stories to express my ideas.', 'I can easily start a conversation with a stranger.', 'I know how to listen attentively and ask questions.', 'I can easily find common ground with people.', 'I adapt my speech to different audiences.', 'I tell stories to inspire others.', 'I know how to inspire people to achieve goals.', 'People trust me and my opinion.', 'I can motivate people to take action.', 'I know how to persuade people of my point of view.', 'I know how to bring conflicting parties to an agreement and opponents to a compromise.', 'I listen attentively when others speak.', 'I express genuine interest in people.', 'I pick up on non-verbal signals and gestures.', 'I can communicate with people on an emotional level.', "I can recognize other people's feelings.", "I can understand another person's point of view.", 'I strive to be sensitive and attentive to others.', 'I behave consistently in different situations.', 'I can admit mistakes and take responsibility.', 'I openly talk about my goals and plans.', 'My words match my actions.', 'My behavior is consistent with my personality.', 'I am not afraid to be myself.', 'People trust me.'];
+    const questionContainer = document.getElementById("questions");
+    const resultContainer = document.getElementById("result");
+
+    function createQuestionElements() {
+      questions.forEach((question, index) => {
+        const wrap = document.createElement("div");
+        wrap.className = "card p-4";
+        const text = document.createElement("p");
+        text.className = "font-body text-gray";
+        text.textContent = `${index + 1}. ${question}`;
+        const ratings = document.createElement("div");
+        ratings.className = "mt-3 flex gap-4 font-body text-sm text-midnight";
+        for (let i = 1; i <= 3; i++) {
+          const label = document.createElement("label");
+          label.className = "flex items-center gap-1";
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `question-${index}`;
+          input.value = i;
+          label.appendChild(input);
+          label.append(` ${i}`);
+          ratings.appendChild(label);
+        }
+        wrap.appendChild(text);
+        wrap.appendChild(ratings);
+        questionContainer.appendChild(wrap);
+      });
+    }
+
+    function calculateScore() {
+      let totalScore = 0;
+      const radioInputs = document.querySelectorAll('input[type="radio"]:checked');
+      radioInputs.forEach((input) => { totalScore += parseInt(input.value); });
+      const maxScore = questions.length * 3;
+      const percentage = (totalScore / maxScore) * 100;
+      let result;
+      if (percentage >= 80) {
+        result = "Strong marks across the board. Sharpen the edges further with a targeted read.";
+      } else if (percentage >= 60) {
+        result = "A solid foundation, with clear room to grow in specific areas.";
+      } else {
+        result = "Plenty of practical opportunity here \u2014 the good news is this is exactly what the series is built to address.";
+      }
+      resultContainer.textContent = `Your score: ${totalScore} out of ${maxScore} (${percentage.toFixed(0)}%). ${result}`;
+    }
+    createQuestionElements();
+  </script>
+</body>
+</html>
