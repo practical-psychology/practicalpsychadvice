@@ -1,6 +1,6 @@
 # practicalpsychadvice.com
 
-## Practical Psychology Advice - Official 10-Book Series Store
+## Practical Psychology Advice - Book Series Store
 
 The official website and store for the "Practical Psychology" series by Andy Horowitz. This is a Next.js application featuring the complete 10-book catalog with integrated Stripe payment processing for seamless book purchases.
 
@@ -25,7 +25,7 @@ The official website and store for the "Practical Psychology" series by Andy Hor
 
 ### File Structure
 
-```
+```text
 .
 ├── app/
 │   ├── api/
@@ -55,29 +55,33 @@ The official website and store for the "Practical Psychology" series by Andy Hor
 
 - **Node.js 18+** - Required for Next.js development
 - **npm or yarn** - Package manager
-- **Stripe Account** - Create free at https://stripe.com
+- **Stripe Account** - Create free at <https://stripe.com>
 - **Git** - For version control
 
 ### Quick Start
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Configure environment variables:**
+
    ```bash
    # .env.local is already configured with test keys
    # For production, update with live Stripe keys
    ```
 
 3. **Run development server:**
+
    ```bash
    npm run dev
    ```
 
 4. **Open in browser:**
-   Navigate to http://localhost:3000
+
+   Navigate to <http://localhost:3000>
 
 5. **Test Stripe checkout:**
    - Click any book's buy button
@@ -103,6 +107,7 @@ The official website and store for the "Practical Psychology" series by Andy Hor
 Creates a Stripe checkout session and returns the checkout URL.
 
 Request body:
+
 ```json
 {
   "priceId": "price_1234567890",
@@ -112,7 +117,9 @@ Request body:
 ```
 
 **POST /api/webhooks/stripe**
+
 Handles Stripe webhook events for:
+
 - `checkout.session.completed` - Order fulfillment
 - `charge.refunded` - Refund processing
 - `customer.subscription.updated` - Subscription management
@@ -120,6 +127,7 @@ Handles Stripe webhook events for:
 #### Environment Variables
 
 Required for operation:
+
 ```env
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 STRIPE_SECRET_KEY=sk_test_...
@@ -136,7 +144,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 npm run dev
 ```
 
-Server runs at http://localhost:3000
+Server runs at <http://localhost:3000>
 
 #### Production Deployment (Vercel)
 
@@ -144,7 +152,7 @@ Server runs at http://localhost:3000
 git push origin main
 ```
 
-1. Connect repository to Vercel (https://vercel.com)
+1. Connect repository to Vercel (<https://vercel.com>)
 2. Add environment variables in Vercel dashboard
 3. Redeploy with production Stripe keys
 
@@ -165,7 +173,7 @@ git push origin main
 - **Authentication Required:** `4000 0025 0000 3155`
 - **Declined:** `4000 0000 0000 0002`
 
-Full list: https://stripe.com/docs/testing
+Full list: <https://stripe.com/docs/testing>
 
 #### Local Webhook Testing
 
@@ -201,16 +209,3 @@ All book cover images are located in `/images`:
 - `book-9-relationships.png`
 - `book-10-communication.png`
 - Plus supporting graphics and author photos
-
-### Project Status
-
-✅ **Complete:** Stripe payment integration, API routes, webhook handling, documentation  
-✅ **Deployed:** Ready for local testing and production deployment  
-⏳ **Next Steps:** Create Stripe products, integrate checkout buttons, configure webhooks
-
-### Support
-
-For setup issues, refer to:
-- [STRIPE_SETUP.md](./STRIPE_SETUP.md) - Full setup guide with troubleshooting
-- [Stripe Documentation](https://stripe.com/docs)
-- [Next.js Documentation](https://nextjs.org/docs)

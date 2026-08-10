@@ -5,7 +5,7 @@ This guide covers setting up the Stripe payment system for the Practical Psychol
 ## Prerequisites
 
 - Node.js 18+ installed
-- Stripe account (free tier available at https://stripe.com)
+- Stripe account (free tier available at <https://stripe.com>)
 - Git repository initialized
 - (Optional) Vercel account for deployment
 
@@ -19,7 +19,7 @@ This installs Next.js, React, Stripe SDKs, and TypeScript.
 
 ## Step 2: Set Up Stripe Account
 
-1. **Create a Stripe account** at https://stripe.com
+1. **Create a Stripe account** at <https://stripe.com>
 2. **Get API Keys:**
    - Go to Dashboard → Developers → API Keys
    - Copy your publishable key (starts with `pk_test_` or `pk_live_`)
@@ -34,9 +34,9 @@ This installs Next.js, React, Stripe SDKs, and TypeScript.
 
 1. **Create `.env.local`** in the project root:
 
-```bash
-cp .env.local.example .env.local
-```
+   ```bash
+   cp .env.local.example .env.local
+   ```
 
 2. **Edit `.env.local`** and add your keys:
 
@@ -57,7 +57,7 @@ STRIPE_WEBHOOK_SECRET=whsec_test_temporary
 brew install stripe/stripe-cli/stripe
 ```
 
-**Or download:** https://stripe.com/docs/stripe-cli
+**Or download:** <https://stripe.com/docs/stripe-cli>
 
 ### Authenticate Stripe CLI
 
@@ -87,7 +87,7 @@ STRIPE_WEBHOOK_SECRET=whsec_test_YOUR_KEY_HERE
 npm run dev
 ```
 
-The app will be available at http://localhost:3000
+The app will be available at <http://localhost:3000>
 
 ### Test Payment Flow
 
@@ -123,7 +123,7 @@ Keep the static HTML, but proxy API calls through Next.js:
 
 For each book, create a product:
 
-```
+```text
 Book 1: The Secrets of Charisma
 Price: $6.99 (ID: price_1234567890)
 
@@ -145,7 +145,7 @@ git push origin main
 
 ### Deploy via Vercel
 
-1. Go to https://vercel.com/import
+1. Go to <https://vercel.com/import>
 2. Import your GitHub repository
 3. Select your repository and click Import
 4. **Environment Variables:** Add your production keys:

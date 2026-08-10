@@ -9,11 +9,11 @@ npm install
 npm run dev
 ```
 
-Visit http://localhost:3000
+Visit <http://localhost:3000>
 
 ### 2. Get Stripe Keys
 
-1. Go to https://dashboard.stripe.com
+1. Go to <https://dashboard.stripe.com>
 2. Dashboard → Developers → API Keys
 3. Copy your **test keys**
 
@@ -46,7 +46,7 @@ git commit -m "Add Stripe payment"
 git push origin main
 ```
 
-1. Go to https://vercel.com
+1. Go to <https://vercel.com>
 2. Import your GitHub repository
 3. Add environment variables (from Stripe Dashboard):
    - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (pk_live_...)
@@ -66,7 +66,7 @@ git push origin main
 
 ## File Structure
 
-```
+```text
 app/
 ├── api/
 │   ├── checkout/          # Create checkout session
@@ -97,6 +97,7 @@ STRIPE_SETUP.md           # Full setup guide
 ## Common Price ID Format
 
 Stripe Price IDs look like:
+
 - Test: `price_1234567890abcdefghij`
 - Live: Same format, just from live API keys
 

@@ -2,29 +2,14 @@
 
 ## Overview
 
-This project now includes a complete Stripe payment integration ready for production deployment. The implementation consists of:
-
-- ✅ **Fixed broken image links** - Renamed files with double dots
-- ✅ **Next.js API routes** - Checkout session creation and webhook handling
-- ✅ **Payment UI components** - Reusable CheckoutButton component
-- ✅ **Success/Cancel pages** - Dedicated checkout flow pages
-- ✅ **Environment configuration** - Secure secrets management
-- ✅ **Documentation** - Setup, testing, and deployment guides
-
-## What Was Implemented
-
-### 1. Fixed Image Links
-All broken image links with double dots have been corrected:
-- `book-5-nonverbal..png` → `book-5-nonverbal.png`
-- `book-7-changing-behavior..png` → `book-7-changing-behavior.png`  
-- `book-4-social-skills..png` → `book-4-social-skills.png`
-
-### 2. API Routes
+### 1. API Routes
 
 #### `/api/checkout` (POST)
+
 Creates a Stripe checkout session.
 
 **Request:**
+
 ```json
 {
   "priceId": "price_1234567890",
@@ -34,6 +19,7 @@ Creates a Stripe checkout session.
 ```
 
 **Response:**
+
 ```json
 {
   "url": "https://checkout.stripe.com/pay/cs_test_..."
@@ -41,28 +27,34 @@ Creates a Stripe checkout session.
 ```
 
 #### `/api/webhooks/stripe` (POST)
+
 Handles Stripe webhook events. Supports:
+
 - `checkout.session.completed` - Order fulfillment
 - `charge.refunded` - Refund processing
 - `customer.subscription.updated` - Subscription updates
 
-### 3. Client-Side Utilities
+### 2. Client-Side Utilities
 
 #### `lib/stripe.ts`
+
 Helper functions for Stripe integration:
+
 - `getStripe()` - Initialize Stripe.js
 - `initiateCheckout(priceId, bookTitle, quantity)` - Start checkout
 
 #### `components/CheckoutButton.tsx`
+
 Reusable checkout button component:
+
 ```jsx
-<CheckoutButton 
+<CheckoutButton
   priceId="price_1234567890"
   bookTitle="The Secrets of Charisma"
 />
 ```
 
-### 4. Pages
+### 3. Pages
 
 - `/checkout/success` - Displays after successful payment
 - `/checkout/cancel` - Shown if user cancels payment
@@ -70,11 +62,13 @@ Reusable checkout button component:
 ## Getting Started
 
 ### Step 1: Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### Step 2: Configure Stripe
+
 ```bash
 # Copy environment template
 cp .env.local.example .env.local
@@ -84,18 +78,22 @@ cp .env.local.example .env.local
 ```
 
 ### Step 3: Create Products in Stripe
+
 For each book, create a Product and Price in Stripe Dashboard:
+
 1. Dashboard → Products → Add Product
 2. Name: "The Secrets of Charisma" (or book title)
 3. Create a Price with amount `699` (cents) and currency `usd`
 4. Copy the Price ID (e.g., `price_1234567890`)
 
 ### Step 4: Run Development Server
+
 ```bash
 npm run dev
 ```
 
 ### Step 5: Test Locally
+
 1. Visit http://localhost:3000
 2. Click a "Buy" button (you'll need to implement this - see Integration below)
 3. Use Stripe test card: `4242 4242 4242 4242`
@@ -106,6 +104,7 @@ npm run dev
 Your current `index.html` has buy button links to books2read. You can:
 
 ### Option A: Add Stripe as Primary Payment (Recommended)
+
 Update buy buttons in `index.html` to use the new CheckoutButton component. Since you're using static HTML, you'd need to:
 
 1. Convert the HTML file to a Next.js page (`app/page.tsx`)
@@ -113,6 +112,7 @@ Update buy buttons in `index.html` to use the new CheckoutButton component. Sinc
 3. Update image paths to use `/images/` (public directory)
 
 Example transformation:
+
 ```jsx
 // OLD (HTML)
 <a class="btn theme-button w-fit" href="https://books2read.com/u/booygA">
@@ -120,7 +120,7 @@ Example transformation:
 </a>
 
 // NEW (JSX with Stripe)
-<CheckoutButton 
+<CheckoutButton
   priceId="price_1234567890"
   bookTitle="The Secrets of Charisma"
   className="btn theme-button w-fit"
@@ -128,6 +128,7 @@ Example transformation:
 ```
 
 ### Option B: Keep Static HTML + API Routing
+
 Keep your current `index.html` and add JavaScript to handle checkout:
 
 ```html
@@ -144,7 +145,7 @@ async function buyBook(priceId, bookTitle) {
 </script>
 
 <!-- In your buy button -->
-<button class="btn theme-button w-fit" 
+<button class="btn theme-button w-fit"
   onclick="buyBook('price_1234567890', 'The Secrets of Charisma')">
   Buy The Secrets of Charisma
 </button>
@@ -153,6 +154,7 @@ async function buyBook(priceId, bookTitle) {
 ## Environment Variables
 
 Required for production:
+
 ```env
 # Publishable key (safe for frontend)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
@@ -169,6 +171,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 ## Deployment
 
 ### Local Testing with Stripe CLI
+
 ```bash
 # Install CLI: https://stripe.com/docs/stripe-cli
 stripe login
@@ -178,6 +181,7 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 Update `.env.local` with the webhook secret from the output.
 
 ### Deploy to Vercel
+
 ```bash
 git push origin main
 ```
@@ -188,6 +192,7 @@ git push origin main
 4. Deploy
 
 ### Production Webhooks
+
 1. Get your Vercel deployment URL (e.g., `https://myapp.vercel.app`)
 2. Stripe Dashboard → Developers → Webhooks → Add endpoint
 3. URL: `https://myapp.vercel.app/api/webhooks/stripe`
@@ -205,10 +210,11 @@ Currently, the webhook handler accepts events but doesn't implement fulfillment 
 - Update inventory
 
 Example:
+
 ```typescript
 case 'checkout.session.completed':
   const session = event.data.object as Stripe.Checkout.Session;
-  
+
   // 1. Save order
   const order = await db.orders.create({
     stripeSessionId: session.id,
@@ -216,26 +222,28 @@ case 'checkout.session.completed':
     amount: session.amount_total,
     bookIds: getBookIdsFromLineItems(session.line_items),
   });
-  
+
   // 2. Send confirmation email
   await email.sendOrderConfirmation(session.customer_email, order);
-  
+
   // 3. Provision access (if selling digital products)
   await provisionDigitalAccess(session.customer_email, order.bookIds);
-  
+
   break;
 ```
 
 ## Testing
 
 ### Test Cards
+
 - **Success:** `4242 4242 4242 4242`
 - **Requires Auth:** `4000 0025 0000 3155`
 - **Declined:** `4000 0000 0000 0002`
 
-Full list: https://stripe.com/docs/testing
+Full list: <https://stripe.com/docs/testing>
 
 ### Testing Webhooks Without CLI
+
 ```bash
 curl -X POST http://localhost:3000/api/webhooks/stripe \
   -H "Content-Type: application/json" \
@@ -244,7 +252,8 @@ curl -X POST http://localhost:3000/api/webhooks/stripe \
 ```
 
 ## File Structure
-```
+
+```text
 .
 ├── app/
 │   ├── api/
@@ -284,8 +293,8 @@ curl -X POST http://localhost:3000/api/webhooks/stripe \
 
 - **Setup Issues:** See [STRIPE_SETUP.md](./STRIPE_SETUP.md)
 - **Quick Help:** See [STRIPE_QUICK_START.md](./STRIPE_QUICK_START.md)
-- **Stripe Docs:** https://stripe.com/docs
-- **Next.js Docs:** https://nextjs.org/docs
+- **Stripe Docs:** <https://stripe.com/docs>
+- **Next.js Docs:** <https://nextjs.org/docs>
 
 ## Summary
 
