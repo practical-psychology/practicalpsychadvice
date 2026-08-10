@@ -38,30 +38,32 @@ Replace `YOUR_KEY` with your actual keys from step 2.
 
 ## Production Deployment
 
-### Via Vercel (Recommended)
+### Via Google Cloud Run (Recommended)
 
 ```bash
-git add .
-git commit -m "Add Stripe payment"
-git push origin main
-```
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com
 
-1. Go to <https://vercel.com>
-2. Import your GitHub repository
-3. Add environment variables (from Stripe Dashboard):
-   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (pk_live_...)
-   - `STRIPE_SECRET_KEY` (sk_live_...)
-   - `STRIPE_WEBHOOK_SECRET` (from webhook setup below)
-4. Deploy
+printf '%s' "pk_live_..." | gcloud secrets create stripe-publishable-key --data-file=-
+printf '%s' "sk_live_..." | gcloud secrets create stripe-secret-key --data-file=-
+printf '%s' "whsec_placeholder" | gcloud secrets create stripe-webhook-secret --data-file=-
+
+gcloud run deploy practicalpsychadvice \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-secrets=STRIPE_SECRET_KEY=stripe-secret-key:latest,\
+STRIPE_WEBHOOK_SECRET=stripe-webhook-secret:latest,\
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=stripe-publishable-key:latest
+```
 
 ### Set Up Production Webhooks
 
-1. Deploy your app to get the URL (e.g., `https://myapp.vercel.app`)
+1. Deploy your app to get the URL (e.g., `https://practicalpsychadvice-xxxxx.us-central1.run.app`)
 2. Go to Stripe Dashboard → Developers → Webhooks
 3. Click "Add endpoint"
-4. Endpoint URL: `https://myapp.vercel.app/api/webhooks/stripe`
+4. Endpoint URL: `https://<your-cloud-run-url>/api/webhooks/stripe`
 5. Select events: `checkout.session.completed`
-6. Copy the webhook secret and update Vercel environment variables
+6. Copy the webhook secret and update the secret: `printf '%s' "whsec_..." | gcloud secrets versions add stripe-webhook-secret --data-file=-`
 7. Redeploy
 
 ## File Structure

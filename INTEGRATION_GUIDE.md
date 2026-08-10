@@ -99,57 +99,27 @@ npm run dev
 3. Use Stripe test card: `4242 4242 4242 4242`
 4. Success! Check the success page
 
-## Integration with Existing HTML
+## Integration with Existing HTML (already wired)
 
-Your current `index.html` has buy button links to books2read. You can:
-
-### Option A: Add Stripe as Primary Payment (Recommended)
-
-Update buy buttons in `index.html` to use the new CheckoutButton component. Since you're using static HTML, you'd need to:
-
-1. Convert the HTML file to a Next.js page (`app/page.tsx`)
-2. Replace `<a>` tags with `<CheckoutButton>` components
-3. Update image paths to use `/images/` (public directory)
-
-Example transformation:
-
-```jsx
-// OLD (HTML)
-<a class="btn theme-button w-fit" href="https://books2read.com/u/booygA">
-  Buy The Secrets of Charisma
-</a>
-
-// NEW (JSX with Stripe)
-<CheckoutButton
-  priceId="price_1234567890"
-  bookTitle="The Secrets of Charisma"
-  className="btn theme-button w-fit"
-/>
-```
-
-### Option B: Keep Static HTML + API Routing
-
-Keep your current `index.html` and add JavaScript to handle checkout:
+Every book's primary "Buy" CTA (`public/index.html` and all `public/audiences/*/book-N.html`) now has a sibling Stripe button next to the existing books2read retailer link, driven by `public/js/checkout.js`:
 
 ```html
-<script>
-async function buyBook(priceId, bookTitle) {
-  const response = await fetch('/api/checkout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ priceId, bookTitle, quantity: 1 })
-  });
-  const { url } = await response.json();
-  window.location.href = url;
-}
-</script>
-
-<!-- In your buy button -->
-<button class="btn theme-button w-fit"
-  onclick="buyBook('price_1234567890', 'The Secrets of Charisma')">
-  Buy The Secrets of Charisma
+<a class="btn theme-button w-fit" href="https://books2read.com/u/booygA">Buy The Secrets of Charisma</a>
+<button type="button" class="btn stripe-btn w-fit" data-stripe-checkout
+  data-price-id="price_..." data-book-title="The Secrets of Charisma">
+  Buy Instantly — Secure Checkout
 </button>
 ```
+
+`checkout.js` listens for clicks on any `[data-stripe-checkout]` element, posts `{priceId, bookTitle, quantity}` to `/api/checkout`, and redirects to the returned Stripe Checkout URL — the same flow `lib/stripe.ts`'s `initiateCheckout()` uses, just callable from plain HTML instead of a React tree. `CheckoutButton.tsx`/`lib/stripe.ts` remain available if a future page is built with React instead of static HTML.
+
+To regenerate the buttons after editing `lib/book-catalog.json` (e.g. new price IDs, a book title change):
+
+```bash
+node scripts/insert-stripe-buttons.mjs
+```
+
+It's idempotent — safe to re-run any time.
 
 ## Environment Variables
 
@@ -180,24 +150,27 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 
 Update `.env.local` with the webhook secret from the output.
 
-### Deploy to Vercel
+### Deploy to Google Cloud Run
 
 ```bash
-git push origin main
+gcloud run deploy practicalpsychadvice \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-secrets=STRIPE_SECRET_KEY=stripe-secret-key:latest,\
+STRIPE_WEBHOOK_SECRET=stripe-webhook-secret:latest,\
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=stripe-publishable-key:latest
 ```
 
-1. Go to https://vercel.com
-2. Import your repository
-3. Add environment variables (from Stripe Dashboard)
-4. Deploy
+`--source .` builds the repo's `Dockerfile` via Cloud Build and deploys it in one step. See `STRIPE_SETUP.md` for the one-time Secret Manager setup.
 
 ### Production Webhooks
 
-1. Get your Vercel deployment URL (e.g., `https://myapp.vercel.app`)
+1. Get your Cloud Run URL from the deploy output (e.g., `https://practicalpsychadvice-xxxxx.us-central1.run.app`)
 2. Stripe Dashboard → Developers → Webhooks → Add endpoint
-3. URL: `https://myapp.vercel.app/api/webhooks/stripe`
+3. URL: `https://<your-cloud-run-url>/api/webhooks/stripe`
 4. Select events: `checkout.session.completed`
-5. Copy webhook secret to Vercel environment variables
+5. Copy the webhook secret into Secret Manager: `printf '%s' "whsec_..." | gcloud secrets versions add stripe-webhook-secret --data-file=-`
 6. Redeploy
 
 ## Webhook Handling
@@ -264,11 +237,15 @@ curl -X POST http://localhost:3000/api/webhooks/stripe \
 │   │   └── cancel/page.tsx            # User cancelled
 │   └── layout.tsx                     # Root layout
 ├── components/
-│   └── CheckoutButton.tsx             # Reusable checkout button
+│   └── CheckoutButton.tsx             # Reusable checkout button (React; unused by the static pages)
 ├── lib/
-│   └── stripe.ts                      # Stripe helpers
-├── public/
-│   └── images/                        # All images (move from root)
+│   ├── stripe.ts                      # Stripe.js helpers
+│   └── book-catalog.json              # slug/title/priceId/books2read-code for all 10 books
+├── scripts/
+│   ├── create-stripe-products.mjs     # Idempotent: creates Stripe products/prices
+│   └── insert-stripe-buttons.mjs      # Idempotent: wires buy buttons into public/*.html
+├── public/                            # Static site + images/, css/, js/checkout.js
+├── Dockerfile                         # Cloud Run build
 ├── .env.local                         # YOUR secrets (not in Git)
 ├── .env.local.example                 # Template
 ├── package.json                       # Dependencies
@@ -281,10 +258,10 @@ curl -X POST http://localhost:3000/api/webhooks/stripe \
 
 ## Next Steps
 
-1. **Create Products** - Add each book as a Stripe product with prices
+1. ~~**Create Products** - Add each book as a Stripe product with prices~~ done (test mode) — re-run `scripts/create-stripe-products.mjs` with live keys before going live
 2. **Test Locally** - Follow Quick Start guide
-3. **Integrate Buttons** - Update your buy buttons with Price IDs
-4. **Deploy** - Push to Vercel
+3. ~~**Integrate Buttons** - Update your buy buttons with Price IDs~~ done — see `scripts/insert-stripe-buttons.mjs`
+4. **Deploy** - `gcloud run deploy` (see above)
 5. **Configure Webhooks** - Set up production webhook in Stripe
 6. **Implement Fulfillment** - Handle orders in webhook handler
 7. **Monitor** - Check Stripe Dashboard for issues

@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "book-1",
+    "title": "The Secrets of Charisma",
+    "priceId": "price_1U30mXRbBH7IFQYeRC34WrIG",
+    "books2readCode": "booygA"
+  },
+  {
+    "slug": "book-2",
+    "title": "Motivation and Setting Goals",
+    "priceId": "price_1U30mYRbBH7IFQYeWIq622uH",
+    "books2readCode": "mda1OO"
+  },
+  {
+    "slug": "book-3",
+    "title": "Self-Awareness and Personal Growth",
+    "priceId": "price_1U30mZRbBH7IFQYedJwIllIV",
+    "books2readCode": "bzyVGz"
+  },
+  {
+    "slug": "book-4",
+    "title": "The Art of Social Skills",
+    "priceId": "price_1U30mZRbBH7IFQYeA60isvka",
+    "books2readCode": "mvpXRV"
+  },
+  {
+    "slug": "book-5",
+    "title": "The Art Of Nonverbal Communication",
+    "priceId": "price_1U30maRbBH7IFQYenevDlijP",
+    "books2readCode": "b56qZw"
+  },
+  {
+    "slug": "book-6",
+    "title": "Mastering Emotional Intelligence",
+    "priceId": "price_1U30maRbBH7IFQYeB6wAxjPw",
+    "books2readCode": "38lVMO"
+  },
+  {
+    "slug": "book-7",
+    "title": "Changing Thinking and Behavior",
+    "priceId": "price_1U30mbRbBH7IFQYeG5r5cRLc",
+    "books2readCode": "4X50n5"
+  },
+  {
+    "slug": "book-8",
+    "title": "Balancing Stress and Emotions",
+    "priceId": "price_1U30mbRbBH7IFQYemjlhK9vK",
+    "books2readCode": "319Qq7"
+  },
+  {
+    "slug": "book-9",
+    "title": "Building and Maintaining Relationships",
+    "priceId": "price_1U30mcRbBH7IFQYetJAId7eq",
+    "books2readCode": "b6BVZE"
+  },
+  {
+    "slug": "book-10",
+    "title": "Effective Communication Strategies",
+    "priceId": "price_1U30mcRbBH7IFQYeEWv3Y1dC",
+    "books2readCode": "mBBVGp"
+  }
+]

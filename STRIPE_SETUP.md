@@ -7,7 +7,7 @@ This guide covers setting up the Stripe payment system for the Practical Psychol
 - Node.js 18+ installed
 - Stripe account (free tier available at <https://stripe.com>)
 - Git repository initialized
-- (Optional) Vercel account for deployment
+- (Optional) Google Cloud project with billing enabled for deployment
 
 ## Step 1: Install Dependencies
 
@@ -101,27 +101,22 @@ The app will be available at <http://localhost:3000>
 5. Enter any future date for expiry, any 3-digit number for CVC
 6. After successful payment, you'll be redirected to `/checkout/success`
 
-## Step 6: Integrate with Your HTML Pages
+## Step 6: HTML Integration (already wired)
 
-### Option A: Replace Current Setup (Recommended for Full Migration)
+The static site now lives under `public/` and is served directly by this same Next.js app (see `next.config.js`'s `/` rewrite to `/index.html`), so the buy buttons call `/api/checkout` on the same origin — no separate deployment or CORS proxying needed.
 
-Convert this static site to a full Next.js app:
+`public/js/checkout.js` posts `{ priceId, bookTitle, quantity }` to `/api/checkout` and redirects to the returned Stripe Checkout URL. Every book page's primary "Buy" CTA has a sibling `<button data-stripe-checkout data-price-id="...">Buy Instantly — Secure Checkout</button>` next to the existing books2read retailer link.
 
-1. Move `/images` to `/public/images`
-2. Create `app/page.tsx` with your current HTML as JSX
-3. Update image paths from `./images/` to `/images/`
+To (re)create the Stripe products/prices and rewire the buttons after editing the catalog, run:
 
-### Option B: Keep Static Site + Separate Next.js API
-
-Keep the static HTML, but proxy API calls through Next.js:
-
-1. Deploy the Next.js app separately
-2. In your HTML buy buttons, call the remote checkout API
-3. Update `initiateCheckout()` to use the full URL
+```bash
+node scripts/create-stripe-products.mjs   # idempotent — writes lib/book-catalog.json
+node scripts/insert-stripe-buttons.mjs    # idempotent — updates public/index.html + public/audiences/*/book-N.html
+```
 
 ## Step 7: Create Products in Stripe Dashboard
 
-For each book, create a product:
+`scripts/create-stripe-products.mjs` already did this for test mode. For **live mode**, either re-run the same script with a `sk_live_` key in your environment, or create products manually:
 
 ```text
 Book 1: The Secrets of Charisma
@@ -133,43 +128,47 @@ Price: $6.99 (ID: price_abcdefghij)
 ... (repeat for all 10 books)
 ```
 
-## Step 8: Deploy to Vercel
+## Step 8: Deploy to Google Cloud Run
 
-### Push to GitHub
+### Store secrets in Secret Manager (once per project)
 
 ```bash
-git add .
-git commit -m "Add Stripe payment integration"
-git push origin main
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com
+
+printf '%s' "sk_live_..." | gcloud secrets create stripe-secret-key --data-file=-
+printf '%s' "pk_live_..." | gcloud secrets create stripe-publishable-key --data-file=-
+printf '%s' "whsec_placeholder" | gcloud secrets create stripe-webhook-secret --data-file=-
 ```
 
-### Deploy via Vercel
+### Deploy
 
-1. Go to <https://vercel.com/import>
-2. Import your GitHub repository
-3. Select your repository and click Import
-4. **Environment Variables:** Add your production keys:
-   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-   - `STRIPE_SECRET_KEY`
-   - `STRIPE_WEBHOOK_SECRET`
-5. Click Deploy
+```bash
+gcloud run deploy practicalpsychadvice \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-secrets=STRIPE_SECRET_KEY=stripe-secret-key:latest,\
+STRIPE_WEBHOOK_SECRET=stripe-webhook-secret:latest,\
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=stripe-publishable-key:latest
+```
 
-Your app will be live at `https://your-app.vercel.app`
+`--source .` builds the repo's `Dockerfile` via Cloud Build automatically — no manual `docker build`/`push` needed. Your app will be live at the printed `https://<service>-<hash>.<region>.run.app` URL.
 
 ## Step 9: Set Up Production Webhooks
 
-1. **Get your production domain** from Vercel deployment
+1. **Get your production URL** from the `gcloud run deploy` output
 2. **Go to Stripe Dashboard → Developers → Webhooks**
 3. **Click "Add endpoint"**
-4. **Endpoint URL:** `https://your-app.vercel.app/api/webhooks/stripe`
+4. **Endpoint URL:** `https://<your-cloud-run-url>/api/webhooks/stripe`
 5. **Select events to listen for:**
    - `checkout.session.completed` (required)
    - `charge.refunded` (optional)
    - `customer.subscription.updated` (if offering subscriptions)
-6. **Copy the signing secret** and add to Vercel Environment Variables:
-   - Key: `STRIPE_WEBHOOK_SECRET`
-   - Value: `whsec_...` (production webhook secret)
-7. **Redeploy** your app for the new environment variable to take effect
+6. **Copy the signing secret** and update the Secret Manager value:
+   ```bash
+   printf '%s' "whsec_..." | gcloud secrets versions add stripe-webhook-secret --data-file=-
+   ```
+7. **Redeploy** (`gcloud run deploy ...` again) so the new secret version is picked up
 
 ## Step 10: Handle Orders in Webhook
 
@@ -263,11 +262,11 @@ When ready for production:
 - Ensure you're using test mode API keys
 - Check for rate limiting (usually not an issue locally)
 
-### Vercel deployment failing
+### Cloud Run deployment failing
 
-- Ensure all environment variables are set in Vercel
-- Check build logs at https://vercel.com/dashboard
-- Verify `node_modules` is in `.gitignore`
+- Ensure all three secrets exist in Secret Manager and the `--set-secrets` flag references them correctly
+- Check build/deploy logs: `gcloud builds list --limit 5` then `gcloud builds log <BUILD_ID>`, or the Cloud Run "Logs" tab in the console
+- Verify `node_modules` and `.next` are in `.dockerignore`
 
 ## Resources
 
@@ -275,7 +274,7 @@ When ready for production:
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Stripe API Reference](https://stripe.com/docs/api)
 - [Stripe Testing Guide](https://stripe.com/docs/testing)
-- [Vercel Documentation](https://vercel.com/docs)
+- [Cloud Run Documentation](https://cloud.google.com/run/docs)
 
 ## Support
 

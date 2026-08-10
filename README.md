@@ -10,7 +10,7 @@ The official website and store for the "Practical Psychology" series by Andy Hor
 - ✅ **Stripe Payment Integration** - Secure checkout and payment processing
 - ✅ **Responsive Design** - Mobile-first design using TailwindCSS
 - ✅ **Order Management** - Webhook handling for payment events
-- ✅ **Production-Ready** - Configured for Vercel deployment
+- ✅ **Production-Ready** - Configured for Google Cloud Run deployment
 - ✅ **TypeScript** - Full type safety for API routes and components
 - ✅ **Multiple Book Retailers** - Direct links to Apple Books, Kobo, and other platforms
 
@@ -20,7 +20,7 @@ The official website and store for the "Practical Psychology" series by Andy Hor
 - **Language:** TypeScript
 - **Styling:** TailwindCSS
 - **Payment:** Stripe API
-- **Deployment:** Vercel
+- **Deployment:** Google Cloud Run (Docker, `output: 'standalone'`)
 - **Database-Ready:** Hooks for order fulfillment (implement as needed)
 
 ### File Structure
@@ -36,16 +36,20 @@ The official website and store for the "Practical Psychology" series by Andy Hor
 │   │   └── cancel/page.tsx            # Payment cancellation page
 │   └── layout.tsx                     # Root layout
 ├── components/
-│   └── CheckoutButton.tsx             # Reusable checkout button
+│   └── CheckoutButton.tsx             # Reusable checkout button (unused by the static pages; kept for any future React page)
 ├── lib/
-│   └── stripe.ts                      # Stripe utility functions
-├── public/images/                     # All book cover images
+│   ├── stripe.ts                      # Stripe.js helpers
+│   └── book-catalog.json              # slug/title/priceId/books2read-code for all 10 books
+├── scripts/
+│   ├── create-stripe-products.mjs     # Idempotent: creates the 10 Stripe products/prices
+│   └── insert-stripe-buttons.mjs      # Idempotent: wires "Buy Instantly" buttons into public/*.html
+├── public/                            # Static site: index.html, audiences/, images/, css/, js/checkout.js
+├── Dockerfile                         # Multi-stage build for Cloud Run
 ├── .env.local                         # Environment secrets (git-ignored)
 ├── .env.local.example                 # Template for environment variables
 ├── package.json                       # Dependencies
-├── next.config.js                     # Next.js configuration
+├── next.config.js                     # Next.js configuration (standalone output + "/" rewrite)
 ├── tsconfig.json                      # TypeScript configuration
-├── index.html                         # Static landing page (legacy)
 ├── STRIPE_SETUP.md                    # Complete setup guide
 ├── STRIPE_QUICK_START.md              # Quick start guide
 └── INTEGRATION_GUIDE.md               # Integration documentation
@@ -146,24 +150,33 @@ npm run dev
 
 Server runs at <http://localhost:3000>
 
-#### Production Deployment (Vercel)
+#### Production Deployment (Google Cloud Run)
 
 ```bash
-git push origin main
+gcloud run deploy practicalpsychadvice \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-secrets=STRIPE_SECRET_KEY=stripe-secret-key:latest,\
+STRIPE_WEBHOOK_SECRET=stripe-webhook-secret:latest,\
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=stripe-publishable-key:latest
 ```
 
-1. Connect repository to Vercel (<https://vercel.com>)
-2. Add environment variables in Vercel dashboard
-3. Redeploy with production Stripe keys
+`--source .` builds the `Dockerfile` in this repo via Cloud Build and deploys it — no separate build step needed. Secrets live in Secret Manager (see below), never in the image or in committed files.
+
+1. Enable APIs once per project: `gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com`
+2. Create the three secrets in Secret Manager (`gcloud secrets create stripe-secret-key --data-file=-`, etc.)
+3. Run the `gcloud run deploy` command above
+4. Grant the Cloud Run service account `roles/secretmanager.secretAccessor` on each secret if deploy doesn't do it automatically
 
 #### Webhook Configuration for Production
 
-1. Deploy to Vercel to get production URL
+1. Deploy to Cloud Run to get the production URL (`https://<service>-<hash>.<region>.run.app`)
 2. In Stripe Dashboard: Developers → Webhooks → Add Endpoint
-3. Endpoint URL: `https://your-app.vercel.app/api/webhooks/stripe`
+3. Endpoint URL: `https://<your-cloud-run-url>/api/webhooks/stripe`
 4. Select events: `checkout.session.completed`
-5. Copy signing secret and update Vercel environment variables
-6. Redeploy
+5. Copy the signing secret and update the `stripe-webhook-secret` value in Secret Manager (`gcloud secrets versions add stripe-webhook-secret --data-file=-`)
+6. Redeploy so the new secret version is picked up
 
 ### Testing
 
