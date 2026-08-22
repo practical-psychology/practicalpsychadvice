@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PsychePulse - Psychology Quizzes & Mind Analytics</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="quiz-data-10tests.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f3ff',
+              100: '#e1e7fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#1e1b4b',
+            },
+            mind: {
+              teal: '#14b8a6',
+              purple: '#a855f7',
+              rose: '#f43f5e',
+              amber: '#f59e0b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.4);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased custom-scrollbar selection:bg-brand-500 selection:text-white">
+
+  <!-- Top Navigation -->
+  <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <i data-lucide="brain" class="w-6 h-6 text-white"></i>
+          </div>
+          <div>
+            <span class="text-xl font-extrabold tracking-tight gradient-text">PsychePulse</span>
+            <span class="text-xs block text-slate-400 -mt-1 font-medium">Psychology Portal</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-1">
+          <button onclick="navigateTo('home')" id="nav-home" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800/60 flex items-center gap-2">
+            <i data-lucide="compass" class="w-4 h-4"></i> Explore
+          </button>
+          <button onclick="navigateTo('quizzes')" id="nav-quizzes" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800/60 flex items-center gap-2">
+            <i data-lucide="book-open" class="w-4 h-4"></i> Quizzes
+          </button>
+          <button onclick="navigateTo('history')" id="nav-history" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800/60 flex items-center gap-2">
+            <i data-lucide="history" class="w-4 h-4"></i> My Results
+          </button>
+        </nav>
+
+        <!-- Right Action Area -->
+        <div class="flex items-center space-x-3">
+          <!-- Auth Control -->
+          <div id="auth-container">
+            <button onclick="openAuthModal()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-500/25 transition-all">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.761H12.545z"/>
+              </svg>
+              Sign In with Google
+            </button>
+          </div>
+
+          <!-- Mobile menu button -->
+          <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="mobile-menu" class="hidden md:hidden border-b border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-1">
+      <button onclick="navigateTo('home')" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">Home</button>
+      <button onclick="navigateTo('quizzes')" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">Quizzes (10 Tests)</button>
+      <button onclick="navigateTo('history')" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">Saved Scores</button>
+    </div>
+  </header>
+
+  <!-- Main Dynamic View Container -->
+  <main id="app-view" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Content injected via JS routing -->
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center sm:text-left sm:flex sm:justify-between sm:items-center space-y-4 sm:space-y-0">
+      <div>
+        <p class="text-sm font-semibold text-slate-300">PsychePulse Portal &copy; 2026</p>
+        <p class="text-xs text-slate-500 mt-1">10 Comprehensive Psychology Self-Assessment Tests</p>
+      </div>
+      <div class="flex justify-center space-x-6 text-xs text-slate-400">
+        <a href="#" onclick="showNotice('Privacy Policy', 'All assessment results are stored locally in your browser session for complete confidentiality.')" class="hover:text-indigo-400 transition-colors">Privacy</a>
+        <a href="#" onclick="showNotice('Psychometric Terms', 'Quiz outputs are intended for personal self-discovery and educational insights, not clinical diagnosis.')" class="hover:text-indigo-400 transition-colors">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Google Auth Modal -->
+  <div id="auth-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full rounded-2xl p-6 shadow-2xl relative border border-slate-700">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white">Sign In to PsychePulse</h3>
+        <p class="text-xs text-slate-400 mt-1">Connect your account to track score trends and save your results.</p>
+      </div>
+
+      <div class="mt-6 space-y-3">
+        <button onclick="simulateGoogleLogin()" class="w-full flex items-center justify-center gap-3 bg-white text-slate-800 font-semibold py-3 px-4 rounded-xl hover:bg-slate-100 transition-colors shadow-md">
+          <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          Continue with Google
+        </button>
+        <button onclick="simulateGuestLogin()" class="w-full text-slate-400 hover:text-slate-200 text-xs py-2 font-medium">
+          Continue as Guest
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 glass-card px-4 py-3 rounded-xl border border-indigo-500/30 shadow-xl flex items-center gap-3">
+    <div id="toast-icon" class="text-indigo-400">
+      <i data-lucide="info" class="w-5 h-5"></i>
+    </div>
+    <div>
+      <div id="toast-title" class="text-xs font-bold text-white">Notice</div>
+      <div id="toast-msg" class="text-xs text-slate-300">Message</div>
+    </div>
+  </div>
+
+  <script>
+    // Global Application State
+    const state = {
+      currentUser: null,
+      activePage: 'home',
+      activeQuizId: null,
+      quizProgress: {
+        quizId: null,
+        currentQuestionIndex: 0,
+        userAnswers: [],
+        timeStarted: null,
+        timeCompleted: null
+      },
+      lastResult: null,
+      userHistory: [],
+      quizzes: quizData || []
+    };
+
+    // Navigation
+    function navigateTo(page, params = {}) {
+      state.activePage = page;
+      updateNav(page);
+      const app = document.getElementById('app-view');
+      window.scrollTo(0, 0);
+      if (page === 'home') renderHome(app);
+      else if (page === 'quizzes') renderQuizzes(app);
+      else if (page === 'quiz-take') renderQuizTake(app, params.quizId);
+      else if (page === 'quiz-results') renderResults(app, params.resultData);
+      else if (page === 'history') renderHistory(app);
+      lucide.createIcons();
+    }
+
+    function updateNav(page) {
+      ['home', 'quizzes', 'history'].forEach(p => {
+        const btn = document.getElementById(`nav-${p}`);
+        if (btn) btn.className = (p === page) 
+          ? "px-4 py-2 rounded-lg text-sm font-semibold text-white bg-indigo-600/30 border border-indigo-500/30 flex items-center gap-2"
+          : "px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 flex items-center gap-2";
+      });
+    }
+
+    function renderHome(container) {
+      container.innerHTML = `
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 border border-slate-800 p-8 sm:p-12 mb-10 shadow-2xl">
+          <div class="max-w-3xl relative z-10">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
+              Explore the Hidden Architecture of Your <span class="gradient-text">Mind</span>
+            </h1>
+            <p class="text-base sm:text-lg text-slate-300 mb-8 leading-relaxed">
+              Complete our comprehensive 10-part psychology assessment series covering social skills, emotional intelligence, cognitive restructuring, stress management, body language, self-awareness, motivation, communication, charisma, and relationships.
+            </p>
+            <button onclick="navigateTo('quizzes')" class="px-6 py-3.5 rounded-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2 text-sm">
+              <i data-lucide="play-circle" class="w-5 h-5"></i> Start Assessments
+            </button>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border border-indigo-500/30 mb-12 shadow-xl">
+          <h3 class="text-xl font-bold text-white mb-6">10 Psychology Self-Assessment Tests</h3>
+          <div class="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-10 gap-3">
+            ${state.quizzes.map((q, i) => `
+              <div onclick="startQuiz('${q.id}')" class="p-3 rounded-xl border border-indigo-500/50 bg-indigo-950/40 hover:border-indigo-400 cursor-pointer text-indigo-200 text-center transition-all">
+                <div class="text-[10px] font-bold uppercase mb-1">0${i+1}</div>
+                <div class="text-[11px] font-semibold truncate">${q.title.substring(0, 15)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="mb-12">
+          <h2 class="text-2xl font-bold text-white tracking-tight mb-6">Available Tests</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${state.quizzes.map(q => `
+              <div class="glass-card rounded-2xl p-6 border border-slate-800 hover:border-indigo-500/50 transition-all cursor-pointer" onclick="startQuiz('${q.id}')">
+                <div class="flex items-center justify-between mb-4">
+                  <span class="px-2.5 py-1 rounded-md text-[11px] font-bold uppercase bg-slate-800 text-indigo-300">${q.category}</span>
+                  <span class="text-xs text-slate-400"><i data-lucide="clock" class="w-3.5 h-3.5 inline"></i> ${q.timeMinutes}m</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">${q.title}</h3>
+                <p class="text-xs text-slate-400 mb-4">${q.description}</p>
+                <button class="w-full px-4 py-2 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 text-sm font-medium transition-all">
+                  Take Test
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderQuizzes(container) {
+      container.innerHTML = `
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-white mb-2">Psychology Assessments</h1>
+          <p class="text-slate-400">${state.quizzes.length} comprehensive self-assessment tests</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          ${state.quizzes.map(q => `
+            <div class="glass-card rounded-2xl p-6 border border-slate-800 hover:border-indigo-500/50 transition-all">
+              <div class="flex items-start justify-between mb-3">
+                <div>
+                  <div class="text-xs font-semibold text-indigo-400 mb-1">${q.badge}</div>
+                  <h3 class="text-lg font-bold text-white">${q.title}</h3>
+                </div>
+                <i data-lucide="${q.icon}" class="w-6 h-6 text-slate-500"></i>
+              </div>
+              <p class="text-sm text-slate-400 mb-4">${q.description}</p>
+              <div class="flex items-center justify-between text-xs text-slate-500 mb-4">
+                <span>${q.questionsCount} questions</span>
+                <span>${q.timeMinutes} min</span>
+              </div>
+              <button onclick="startQuiz('${q.id}')" class="w-full px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-all">
+                Start Test
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderQuizTake(container, quizId) {
+      container.innerHTML = '<div class="text-center py-12"><p class="text-slate-400">Quiz interface - implementation in progress</p></div>';
+    }
+
+    function renderResults(container, resultData) {
+      container.innerHTML = '<div class="text-center py-12"><p class="text-slate-400">Results display - implementation in progress</p></div>';
+    }
+
+    function renderHistory(container) {
+      container.innerHTML = '<div class="text-center py-12"><p class="text-slate-400">No quiz history yet. Start taking tests to build your profile.</p></div>';
+    }
+
+    function startQuiz(quizId) {
+      const quiz = state.quizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+      state.activeQuizId = quizId;
+      alert(`${quiz.title} - Coming soon! Full quiz interface will be implemented.`);
+    }
+
+    function openAuthModal() {
+      document.getElementById('auth-modal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    }
+
+    function simulateGoogleLogin() {
+      state.currentUser = { name: 'Guest User', avatar: 'https://via.placeholder.com/40' };
+      closeAuthModal();
+      updateAuthUI();
+    }
+
+    function simulateGuestLogin() {
+      closeAuthModal();
+    }
+
+    function updateAuthUI() {
+      const container = document.getElementById('auth-container');
+      if (state.currentUser) {
+        container.innerHTML = `<div class="flex items-center gap-2"><button onclick="logoutUser()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Sign Out</button></div>`;
+      }
+    }
+
+    function logoutUser() {
+      state.currentUser = null;
+      updateAuthUI();
+    }
+
+    function showNotice(title, message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-title').textContent = title;
+      document.getElementById('toast-msg').textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+    }
+
+    // Initialize
+    navigateTo('home');
+  </script>
+</body>
+</html>
