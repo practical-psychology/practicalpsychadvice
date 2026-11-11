@@ -27,16 +27,21 @@ export async function POST(req: NextRequest) {
   }
 
   switch (event.type) {
-    case 'checkout.session.completed':
+    case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
-
-      // TODO: Fulfill order
-      // - Update database with order info
-      // - Send confirmation email
-      // - Update user account/library
-
-      console.log(`Order completed for ${session.customer_email}`);
+      // Delivery happens on /checkout/success (verified paid session + download link).
+      // This log is the order record; search Cloud Run logs for "ORDER_COMPLETED".
+      console.log(
+        'ORDER_COMPLETED',
+        JSON.stringify({
+          session: session.id,
+          slug: session.metadata?.slug,
+          email: session.customer_details?.email,
+          amount: session.amount_total,
+        })
+      );
       break;
+    }
 
     case 'charge.refunded':
       const charge = event.data.object as Stripe.Charge;

@@ -13,6 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="stylesheet" href="/css/tailwind.min.css" />
+        <meta name="robots" content="noindex" />
+      </head>
       <body>{children}</body>
     </html>
   );
