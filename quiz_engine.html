@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Psychology Assessment Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="showHubView()">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                        <i class="fa-solid fa-brain text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-slate-900 text-lg leading-tight">Practical Psychology</h1>
+                        <p class="text-xs text-slate-500 font-medium">10-Book Assessment & Testing Suite</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button id="navHubBtn" onclick="showHubView()" class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-grid-2"></i>
+                        <span class="hidden sm:inline">Quiz Hub</span>
+                    </button>
+                    <button onclick="openOverviewModal()" class="px-3.5 py-2 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>All Stats</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Region -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        
+        <!-- VIEW 1: Quiz Directory Hub -->
+        <div id="hubView" class="space-y-6">
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="max-w-3xl relative z-10 space-y-3">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                        <i class="fa-solid fa-sparkles"></i> Validated Testing System
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Psychological Self-Assessment Suite</h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Complete diagnostic testing for all 10 books. Rate statements from <span class="text-blue-300 font-semibold">1 (Rarely)</span> to <span class="text-blue-300 font-semibold">3 (Often)</span> to evaluate your baseline metrics across 50 key behavioral dimensions.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Cards Grid -->
+            <div id="quizCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+
+        <!-- VIEW 2: Active Test Execution View -->
+        <div id="testView" class="hidden space-y-6">
+            <!-- Quiz Control & Header Bar -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2 text-xs font-medium text-slate-500">
+                            <span id="testBookBadge" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold">Book 1</span>
+                            <span>•</span>
+                            <span id="testQuestionCountBadge">47 Questions</span>
+                        </div>
+                        <h2 id="testTitle" class="text-xl sm:text-2xl font-bold text-slate-900">Quiz Title Here</h2>
+                    </div>
+
+                    <!-- Action Controls -->
+                    <div class="flex items-center gap-2 self-start sm:self-center flex-wrap">
+                        <button onclick="autoFillSampleData()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>Quick Demo Fill</span>
+                        </button>
+                        <button onclick="resetCurrentQuiz()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Reset</span>
+                        </button>
+                        <button onclick="showHubView()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Bar & Instruction -->
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <div class="flex justify-between items-center text-xs text-slate-600 font-medium">
+                        <span id="progressText">0 of 0 answered (0%)</span>
+                        <span id="sectionNavIndicator" class="text-blue-600 font-semibold">Section 1 of 5</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 w-0"></div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-xs text-blue-900 flex items-start space-x-2.5">
+                    <i class="fa-solid fa-circle-info text-blue-600 text-sm mt-0.5 shrink-0"></i>
+                    <p id="testInstructions">Read every statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.</p>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Form -->
+            <form id="quizForm" onsubmit="handleQuizSubmit(event)" class="space-y-8">
+                <div id="questionsContainer" class="space-y-8">
+                    <!-- Dynamic Sections & Questions -->
+                </div>
+
+                <div class="sticky bottom-4 z-20 bg-white/95 backdrop-blur border border-slate-200 p-4 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="text-xs text-slate-500 font-medium text-center sm:text-left">
+                        <span id="footerUnansweredAlert" class="text-slate-600">Ensure all questions are answered before scoring.</span>
+                    </div>
+                    <button type="submit" class="w-full sm:w-auto px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition transform active:scale-95 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>Calculate Score & Generate Evaluation</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- VIEW 3: Score & Evaluation Dashboard -->
+        <div id="resultsView" class="hidden space-y-6">
+            <!-- Header Summary Card -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-6">
+                    <div>
+                        <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 mb-1">
+                            <span id="resBookBadge" class="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">Book 1</span>
+                            <span>•</span>
+                            <span id="resDate">Completed Today</span>
+                        </div>
+                        <h2 id="resQuizTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900">Charisma Self-Assessment</h2>
+                        <p class="text-slate-500 text-sm mt-1">Diagnostic Score Breakdown & Tailored Psychological Guidance</p>
+                    </div>
+
+                    <div class="flex items-center space-x-3 no-print">
+                        <button onclick="window.print()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-print"></i>
+                            <span>Print / Save PDF</span>
+                        </button>
+                        <button onclick="retakeCurrentQuiz()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Retake Test</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Total Score Gauge Banner -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <div class="bg-slate-900 text-white p-6 rounded-2xl flex flex-col justify-between h-full shadow-lg relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-blue-500/20 rounded-full blur-xl"></div>
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Overall Assessment Score</span>
+                        <div class="my-4">
+                            <div class="flex items-baseline space-x-2">
+                                <span id="resTotalScore" class="text-5xl font-extrabold text-white">118</span>
+                                <span id="resMaxScore" class="text-lg font-medium text-slate-400">/ 141</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-2 mt-3 overflow-hidden">
+                                <div id="resPercentageBar" class="bg-gradient-to-r from-blue-400 to-indigo-400 h-2 rounded-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400">Overall Ratio:</span>
+                            <span id="resRatioPct" class="font-bold text-blue-400">83.7%</span>
+                        </div>
+                    </div>
+
+                    <!-- Rating Status Callout -->
+                    <div class="md:col-span-2 bg-slate-50 border border-slate-200/80 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Performance Profile Tier</span>
+                                <span id="resStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">High Standard</span>
+                            </div>
+                            <h3 id="resTierSummary" class="text-lg font-bold text-slate-800">You demonstrate consistent habits in this area.</h3>
+                            <p id="resTierDescription" class="text-xs text-slate-600 mt-1 leading-relaxed">Your total score indicates a strong baseline across most evaluated competencies, with isolated dimensions available for focused mastery.</p>
+                        </div>
+
+                        <!-- Priority Focus Alert -->
+                        <div id="priorityFocusBox" class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start space-x-3">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600 text-base mt-0.5 shrink-0"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-amber-900">Priority Mastery Target</h4>
+                                <p id="resPriorityText" class="text-xs text-amber-800 mt-0.5">Focus on <strong>Adaptability</strong> (14/27), which scored lowest relative to your overall baseline.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Section Scores Breakdown -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-simple text-blue-600"></i>
+                        <span>Domain & Section Score Breakdown</span>
+                    </h3>
+                    <span class="text-xs text-slate-500 font-medium">Individual Section Max Ranges</span>
+                </div>
+
+                <div id="sectionScoresGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Official Evaluation Guidance -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-blue-600"></i>
+                    <span>Official Book Evaluation Rules & Diagnostics</span>
+                </h3>
+                <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-700 leading-relaxed font-normal whitespace-pre-line" id="resOfficialEvaluationText">
+                    <!-- Evaluation text loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERVIEW MODAL: All 10 Quizzes Matrix -->
+        <div id="overviewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-lg">10-Book Testing Diagnostics Matrix</h3>
+                        <p class="text-xs text-slate-500">Summary of quiz structures, score ranges, and completed test history</p>
+                    </div>
+                    <button onclick="closeOverviewModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="p-6 overflow-y-auto custom-scrollbar flex-grow space-y-4">
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                        <table class="w-full text-left text-xs text-slate-700">
+                            <thead class="bg-slate-100 text-slate-900 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">Book</th>
+                                    <th class="p-3">Title & Quiz Name</th>
+                                    <th class="p-3">Sections</th>
+                                    <th class="p-3">Total Qs</th>
+                                    <th class="p-3">Max Score</th>
+                                    <th class="p-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="overviewTableBody" class="divide-y divide-slate-100">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                    <button onclick="closeOverviewModal()" class="px-5 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 transition">
+                        Close Matrix
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p class="font-semibold text-slate-700">Practical Psychology Self-Assessment Engine</p>
+            <p>10-Book Diagnostic Evaluation Platform • All 10 Quizzes Included</p>
+        </div>
+    </footer>
+
+    <script>
+        const quizDatabase = [
+  {
+    "book_number": 1,
+    "book_title": "The Secrets of Charisma",
+    "quiz_title": "Charisma Self-Assessment Questionnaire",
+    "instructions": "Read every statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Confidence",
+        "questions": [
+          "I usually make a positive first impression on people.",
+          "I speak in a tone that is pleasant and attention-grabbing.",
+          "I am aware of and in control of my ability to attract others.",
+          "I dress to express my confidence.",
+          "I maintain a positive image on social media.",
+          "I feel comfortable in various social situations.",
+          "I coordinate my speech with my gestures.",
+          "My voice is pleasant to hear.",
+          "I am fluent in body language."
+        ]
+      },
+      {
+        "section_title": "Adaptability",
+        "questions": [
+          "I tailor my communication style to the audience.",
+          "It is not difficult for me to establish connections with people from different social groups.",
+          "I maintain my composure and adapt easily to changes in plans and expectations.",
+          "I am flexible in problem solving and can accept different points of view.",
+          "I can seamlessly switch between roles on the team as needed.",
+          "I am comfortable with uncertainty and can make decisions with limited information.",
+          "I change my goals and strategies based on the information I receive.",
+          "I easily find a common language with other people, even during conflicts.",
+          "My adaptability to situations contributes to my charm."
+        ]
+      },
+      {
+        "section_title": "Emotional Intelligence",
+        "questions": [
+          "I demonstrate genuine concern for the well-being of others.",
+          "I accurately assess the situation and adapt my behavior accordingly.",
+          "I manage my emotions effectively even under stressful or unexpected circumstances.",
+          "I skillfully defuse tense situations with humor or empathy.",
+          "I express my emotions clearly.",
+          "I develop deep connections with a wide variety of people.",
+          "I am receptive to feedback and use it to improve my communication skills.",
+          "I accept criticism and see it as an opportunity for personal growth.",
+          "I am valued for my ability to establish and maintain strong, long-term relationships."
+        ]
+      },
+      {
+        "section_title": "Influence",
+        "questions": [
+          "I motivate others to achieve their goals.",
+          "People often seek my advice.",
+          "I share my successes and failures to inspire others.",
+          "I am strong in my beliefs and serve as an example to others.",
+          "I have the ability to instill confidence in others.",
+          "I lead by example by demonstrating, not just explaining.",
+          "My enthusiasm is contagious and inspires people.",
+          "I recognize and value the potential of others.",
+          "I am able to unite people around a common goal.",
+          "I use stories and anecdotes to inspire people."
+        ]
+      },
+      {
+        "section_title": "Authenticity and Honesty",
+        "questions": [
+          "I remain true to my values and beliefs.",
+          "I am transparent in my intentions and actions.",
+          "My honesty promotes trust and respect from others.",
+          "I openly admit my mistakes and strive to learn from them.",
+          "I treat everyone fairly and respectfully, regardless of their status.",
+          "I remain consistent in my actions in different situations.",
+          "I share my problems.",
+          "I fulfill my obligations.",
+          "I practice what I preach, making sure my actions are consistent with my words.",
+          "I maintain my self-esteem, regardless of external influences."
+        ]
+      }
+    ],
+    "evaluation": "Answer all questions and calculate your points for each section. Add all forty-seven ratings. The possible total is 47–141. A score of 113–141 indicates that you report using many of these behaviors often; 75–112 indicates a mixed pattern; 47–74 indicates that many are not yet regular habits. Do not treat the total as a validated diagnosis of charisma. Read the section scores separately: Confidence, Adaptability, and Emotional Intelligence each range from 9–27, while Influence and Authenticity each range from 10–30. Prioritize a 9-item section at 16 or below or a 10-item section at 17 or below. Focus on sections with the smallest number of points and where the results do not meet your expectations."
+  },
+  {
+    "book_number": 2,
+    "book_title": "The Art of Social Skills",
+    "quiz_title": "Self-Assessment of Social Skills",
+    "instructions": "Read each statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Interpersonal Communication",
+        "questions": [
+          "I clearly articulate my thoughts and feelings in conversations.",
+          "I adapt my communication style to fit the context and audience.",
+          "I use appropriate humor to lighten conversations and engage others.",
+          "I can hold a conversation with someone I've just met.",
+          "I actively seek feedback to improve my communication skills.",
+          "I recognize and respect cultural differences in communication.",
+          "I avoid dominating conversations and allow others space to speak.",
+          "I convey my messages concisely, without unnecessary elaboration.",
+          "I am comfortable speaking in front of groups.",
+          "I effectively use non-verbal communication to complement my words."
+        ]
+      },
+      {
+        "section_title": "Listening Skills",
+        "questions": [
+          "I listen more than I talk in conversations.",
+          "I show empathy by acknowledging others' feelings and perspectives.",
+          "I provide non-verbal cues to show I'm listening.",
+          "I avoid interrupting others when they are speaking.",
+          "I ask questions to clarify understanding and show interest.",
+          "I can recall details from previous conversations.",
+          "I resist the urge to formulate my response while listening.",
+          "I give my full attention, without distraction, to the speaker.",
+          "I recognize the emotions behind words through tone and body language.",
+          "I validate others' experiences and feelings, even if I don't agree."
+        ]
+      },
+      {
+        "section_title": "Assertiveness",
+        "questions": [
+          "I express my needs and opinions respectfully and clearly.",
+          "I set healthy boundaries in my interactions with others.",
+          "I can say \"no\" without feeling guilty.",
+          "I handle criticism constructively, without becoming defensive.",
+          "I advocate for myself and others in a balanced manner.",
+          "I maintain my composure in challenging conversations.",
+          "I seek compromise and negotiate to resolve disagreements.",
+          "I am confident in expressing my ideas, even if they are unpopular.",
+          "I address conflicts directly and aim for resolution.",
+          "I can maintain positive relationships despite differences in opinion."
+        ]
+      },
+      {
+        "section_title": "Empathy and Support",
+        "questions": [
+          "I can easily put myself in others' shoes to understand their perspective.",
+          "I express genuine concern and interest in the well-being of others.",
+          "I offer support and encouragement when others share their struggles.",
+          "I can detect subtle cues indicating someone's emotional state.",
+          "I adjust my approach based on others' emotional needs.",
+          "I offer help without being asked when I see someone in need.",
+          "I maintain confidentiality and trust when others confide in me.",
+          "I am comfortable discussing a wide range of emotions.",
+          "I promote a sense of inclusivity and belonging in groups.",
+          "I am sensitive to and respectful of others' vulnerabilities."
+        ]
+      },
+      {
+        "section_title": "Social Adaptability",
+        "questions": [
+          "I easily adapt to different social settings and groups.",
+          "I am comfortable initiating and joining group activities.",
+          "I maintain a positive attitude and openness to new experiences.",
+          "I am aware of social norms and adjust my behavior accordingly.",
+          "I build rapport quickly with a variety of people.",
+          "I can navigate and mediate group dynamics effectively.",
+          "I recognize and respect diversity in opinions and lifestyles.",
+          "I can identify and connect with shared interests in social interactions.",
+          "I manage social anxiety or awkwardness constructively.",
+          "I continue to expand my social network and engage in diverse communities."
+        ]
+      }
+    ],
+    "evaluation": "Add your points across all five sections for a total out of 150. A total of 120 or higher signals a high level of social skills overall. A total between 80 and 119 signals an average, developing level. A total below 80 suggests real room to grow. Whatever your total, treat any single section where you scored under 60% of its available points (18 of 30) as the specific skill most worth practicing first."
+  },
+  {
+    "book_number": 3,
+    "book_title": "Effective Communication Strategies",
+    "quiz_title": "Self-Assessment on Communication Strategies",
+    "instructions": "Read each statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Clarity and Conciseness",
+        "questions": [
+          "I express my ideas clearly and directly.",
+          "I avoid using jargon or overly complex language when it's not necessary.",
+          "I get to the point quickly without unnecessary detail.",
+          "I structure my messages logically, making them easy to follow.",
+          "I am mindful of my audience's knowledge level and adjust my explanations accordingly.",
+          "I use visual aids or examples to clarify complex points when needed.",
+          "I summarize key points at the end of a discussion to ensure understanding.",
+          "I ask for feedback to confirm my message has been understood as intended.",
+          "I tailor my message to suit the mode of communication (email, phone, in-person).",
+          "I use precise language and avoid ambiguities."
+        ]
+      },
+      {
+        "section_title": "Active Listening",
+        "questions": [
+          "I give my full attention to the speaker without interrupting.",
+          "I show that I am listening through my body language (nodding, eye contact).",
+          "I reflect back what I've heard to ensure I've understood correctly.",
+          "I withhold judgment and listen to understand, not to respond.",
+          "I encourage the speaker with verbal affirmations or questions.",
+          "I detect and interpret non-verbal cues from the speaker.",
+          "I keep an open mind and consider the speaker's perspective.",
+          "I summarize the main points of what the speaker has said when they have finished.",
+          "I ask clarifying questions if I am unsure about something.",
+          "I remain patient, even if the conversation is lengthy or complex."
+        ]
+      },
+      {
+        "section_title": "Emotional Intelligence",
+        "questions": [
+          "I manage my emotions effectively during conversations.",
+          "I am aware of and considerate about the emotions of others when I communicate.",
+          "I adjust my communication style based on the emotional state of the other person.",
+          "I use empathy to connect with the speaker and understand their perspective.",
+          "I express my emotions in a healthy and constructive manner.",
+          "I recognize when a conversation requires a more sensitive approach.",
+          "I remain calm and composed, even in challenging conversations.",
+          "I approach sensitive topics with care and consideration.",
+          "I use positive language to influence the mood and tone of the conversation.",
+          "I am able to de-escalate tense situations through my communication style."
+        ]
+      },
+      {
+        "section_title": "Assertiveness",
+        "questions": [
+          "I express my needs and opinions respectfully, without infringing on others' rights.",
+          "I stand up for my beliefs and values in a constructive manner.",
+          "I set clear boundaries in my interactions.",
+          "I am able to say no when necessary, without feeling guilty.",
+          "I address issues directly and seek resolution.",
+          "I communicate my expectations clearly to avoid misunderstandings.",
+          "I maintain my self-esteem and confidence when faced with resistance or criticism.",
+          "I negotiate and compromise to find mutually beneficial solutions.",
+          "I advocate for myself and others when it's important.",
+          "I balance assertiveness with empathy to maintain positive relationships."
+        ]
+      },
+      {
+        "section_title": "Feedback and Conflict Resolution Skills",
+        "questions": [
+          "I give constructive feedback that is specific, actionable, and focused on behavior, not the person.",
+          "I receive feedback openly, without becoming defensive.",
+          "I use \"I\" statements to communicate how something affects me, rather than blaming.",
+          "I actively seek solutions during conflicts that address everyone's needs.",
+          "I remain respectful and professional, even in disagreement.",
+          "I address conflicts early to prevent escalation.",
+          "I strive to understand the root cause of conflicts.",
+          "I facilitate discussions to reach a consensus or compromise.",
+          "I recognize when to involve a mediator to resolve complex disputes.",
+          "I follow up after resolving a conflict to ensure the solution is effective."
+        ]
+      }
+    ],
+    "evaluation": "Add your points across all five sections for a total out of 150. A total of 120 or higher signals strong communication skills overall. A total between 80 and 119 signals an average, developing level. A total below 80 suggests real room to grow. Treat any section under 18/30 (60%) as the key domain to practice."
+  },
+  {
+    "book_number": 4,
+    "book_title": "The Art of Nonverbal Communication",
+    "quiz_title": "Body Language Self-Assessment Questionnaire",
+    "instructions": "Read each statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Expressiveness",
+        "questions": [
+          "I use hand gestures while speaking to emphasize points.",
+          "My facial expressions match the message I am conveying.",
+          "I consciously adjust my body language to appear more open and inviting.",
+          "I show agreement or understanding by nodding during a conversation.",
+          "My tone of voice matches the emotional content of my message.",
+          "I maintain appropriate eye contact to show interest without making others uncomfortable.",
+          "I consciously smile during conversations to create a positive atmosphere.",
+          "I avoid crossing my arms or legs in a way that might seem withdrawn or defensive.",
+          "My gestures are controlled, not exaggerated, and appropriate to the context of the conversation.",
+          "I match the pace of my movements with my speech to improve the coherence of the communication."
+        ]
+      },
+      {
+        "section_title": "Interpretation",
+        "questions": [
+          "I can accurately interpret others' body language and non-verbal cues.",
+          "I notice when someone's words and body language don't align.",
+          "I pay attention to micro-expressions that may reveal true feelings.",
+          "I adjust my communication approach based on the non-verbal feedback I receive.",
+          "I can detect signs of discomfort or disinterest in others through their body language.",
+          "I can sense tension in a room by observing people's body language.",
+          "I understand when someone needs reassurance based on their non-verbal cues.",
+          "I pick up on subtle changes in body language that indicate a shift in mood or opinion.",
+          "I recognize signs of honesty and dishonesty through body language cues.",
+          "I use my observations of body language to navigate conversations more effectively."
+        ]
+      },
+      {
+        "section_title": "Space Awareness",
+        "questions": [
+          "I am aware of personal space and adjust the distance according to cultural norms and individual preferences.",
+          "I use physical proximity to express warmth and openness when appropriate.",
+          "I recognize when I need to step back and give someone more space to feel comfortable.",
+          "I use my presence to attract attention.",
+          "I navigate different social settings while maintaining appropriate body language.",
+          "I use the direction I'm facing to show my attention to the speaker.",
+          "I pay attention to the cultural importance of space and touch in communication.",
+          "I adjust my position as needed to facilitate or discourage further conversation.",
+          "I use spatial arrangements to positively influence the dynamic of the meeting.",
+          "I recognize and respect when cultural differences dictate differences in personal space."
+        ]
+      },
+      {
+        "section_title": "Posture and Presence",
+        "questions": [
+          "I consciously relax my shoulders to avoid appearing tense or aggressive.",
+          "I maintain good posture to show confidence and engagement.",
+          "I use my posture to show readiness to engage, leaning slightly forward when interested.",
+          "I am aware of the impact my physical appearance has on my overall non-verbal communication.",
+          "I ensure that my walk and movement reflect confidence and purpose.",
+          "I use space effectively when presenting or speaking to a group to engage my audience.",
+          "During a conversation, I am aware of the position of my body in relation to others.",
+          "I ensure that my posture is firm and balanced to convey stability.",
+          "I use my presence to make others feel acknowledged and included.",
+          "I adjust my posture and position depending on the context and setting of the interaction."
+        ]
+      },
+      {
+        "section_title": "Adaptability",
+        "questions": [
+          "I can modify my body language to suit different social and professional contexts.",
+          "I use body language effectively to bridge language barriers in diverse environments.",
+          "I am sensitive to changes in the environment that might affect the comfort levels of others.",
+          "I use body language to complement the tone of difficult conversations, softening the message when needed.",
+          "I maintain awareness of my body language in virtual settings and understand its impact through the screen as well.",
+          "I quickly pick up on the body language norms of the group and adjust my behavior accordingly.",
+          "I am flexible in adjusting my non-verbal cues when I notice they are not having the desired effect.",
+          "I consciously mirror the body language of others to create rapport and empathy.",
+          "I adjust my non-verbal communication style when interacting with people from different generations.",
+          "I am adept at switching from formal to casual body language cues depending on the situation."
+        ]
+      }
+    ],
+    "evaluation": "Add your points across all five sections for a total out of 150. A total of 120 or higher signals high nonverbal mastery. 80-119 is developing. Below 80 indicates significant growth potential. Treat any section below 18/30 as a target area."
+  },
+  {
+    "book_number": 5,
+    "book_title": "Changing Thinking and Behavior",
+    "quiz_title": "Questionnaire on Cognitive Restructuring and Behavior Changes",
+    "instructions": "Read each statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Cognitive Awareness",
+        "questions": [
+          "I recognize when I'm engaging in negative thinking patterns.",
+          "I actively challenge my irrational beliefs or thoughts.",
+          "I am aware of my cognitive biases and try to correct them.",
+          "I identify and reframe cognitive distortions (like overgeneralizing or catastrophizing).",
+          "I use positive affirmations to counteract negative self-talk.",
+          "I reflect on past situations to find alternative positive interpretations.",
+          "I acknowledge my strengths and remind myself of them during challenging times.",
+          "I practice gratitude by acknowledging good aspects in my life regularly.",
+          "I set realistic expectations for myself and others.",
+          "I differentiate between what I can and cannot control, focusing my energy accordingly."
+        ]
+      },
+      {
+        "section_title": "Behavioral Adaptation",
+        "questions": [
+          "I take small steps towards changing behaviors I want to improve.",
+          "I use reward systems to motivate myself to engage in desired behaviors.",
+          "I employ time management techniques to enhance productivity.",
+          "I establish healthy habits by replacing undesirable ones with better alternatives.",
+          "I take small, planned steps toward situations I value.",
+          "I maintain a healthy balance between work, rest, and leisure activities.",
+          "I seek feedback from others to identify areas for behavioral improvement.",
+          "I commit to personal goals.",
+          "I review my progress toward my goals regularly.",
+          "I practice self-compassion and patience with my pace of change.",
+          "I adapt my behavior based on the outcomes of my actions, learning from experiences."
+        ]
+      },
+      {
+        "section_title": "Emotional Regulation",
+        "questions": [
+          "I recognize and accept my emotions without judgment.",
+          "I employ deep breathing or relaxation techniques when stressed.",
+          "I express my emotions in healthy and constructive ways.",
+          "I use coping strategies like mindfulness or exercise to manage negative emotions.",
+          "I take a step back to evaluate situations before reacting emotionally.",
+          "I seek supportive relationships that help me process my emotions.",
+          "I differentiate between my emotions and my actions.",
+          "I remind myself of the impermanence of emotions.",
+          "I prioritize activities that positively impact my emotional well-being.",
+          "I consider the impact of my emotional state on my decisions and behaviors."
+        ]
+      },
+      {
+        "section_title": "Mindfulness and Presence",
+        "questions": [
+          "I practice mindfulness to stay present in the moment.",
+          "I observe my thoughts without getting caught up in them.",
+          "I engage fully in whatever activity I'm doing without multitasking.",
+          "I use mindfulness exercises to enhance my concentration and focus.",
+          "I appreciate the details in everyday life that I usually overlook.",
+          "I listen actively to others, giving them my full attention.",
+          "I practice mindful eating, paying attention to the taste, texture, and sensations.",
+          "I minimize distractions to maintain presence in my interactions.",
+          "I regularly participate in activities that encourage a state of flow.",
+          "I cultivate an attitude of openness and curiosity towards new experiences."
+        ]
+      },
+      {
+        "section_title": "Problem-Solving and Adaptability",
+        "questions": [
+          "I approach problems with a solution-focused mindset.",
+          "I adapt my strategies based on the effectiveness of previous outcomes.",
+          "I remain flexible in my thinking, considering multiple viewpoints.",
+          "I use creative thinking to overcome obstacles.",
+          "I plan for potential challenges and think about how to address them.",
+          "I leverage my strengths to tackle difficulties.",
+          "I recognize when to seek help or resources to solve a problem.",
+          "I evaluate the pros and cons before making significant decisions.",
+          "I stay calm and collected under pressure, focusing on actionable steps.",
+          "I reflect on resolved issues to learn and apply those lessons to future situations."
+        ]
+      }
+    ],
+    "evaluation": "Note: This quiz features 51 questions across 5 sections (Behavioral Adaptation contains 11 questions). Total possible score is 51–153. 120–153 reflects deliberate application of cognitive restructuring. 80–119 represents a working level. Below 80 indicates unestablished habits. Sections below 16/30 (or <18/33 for Behavioral Adaptation) mark priority focus domains."
+  },
+  {
+    "book_number": 6,
+    "book_title": "Mastering Emotional Intelligence",
+    "quiz_title": "Emotional Intelligence Questionnaire",
+    "instructions": "Read each statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Self-Awareness",
+        "questions": [
+          "I recognize my emotions as they occur and understand why they happen.",
+          "I am aware of my strengths and limitations.",
+          "I can identify what triggers my emotional responses.",
+          "I regularly reflect on my emotions and their impact on my behavior.",
+          "I understand how my emotions can affect my thoughts and decisions.",
+          "I acknowledge when my mood affects my thoughts and actions.",
+          "I can describe my emotional state using a wide range of vocabulary.",
+          "I recognize the influence of my past experiences on my present emotions.",
+          "I seek feedback from others to enhance my self-awareness.",
+          "I am mindful of my emotional state without becoming overwhelmed by it."
+        ]
+      },
+      {
+        "section_title": "Self-Regulation",
+        "questions": [
+          "I can manage my emotional reactions in stressful situations.",
+          "I think before I act when experiencing strong emotions.",
+          "I am able to calm myself down when I feel anxious or upset.",
+          "I handle criticism constructively and without defensiveness.",
+          "I adapt well to change and can adjust my approach when necessary.",
+          "I express my feelings in a constructive manner when upset.",
+          "I maintain integrity by aligning my actions with my values.",
+          "I can resist impulsive behavior that could harm myself or others.",
+          "I set boundaries to manage emotionally draining situations.",
+          "I practice patience in situations where emotions run high."
+        ]
+      },
+      {
+        "section_title": "Motivation",
+        "questions": [
+          "I am driven to achieve personal or professional goals for my own fulfillment, not just for external rewards.",
+          "I remain optimistic even when faced with obstacles or failures.",
+          "I can maintain focus on long-term goals despite setbacks.",
+          "I seek out feedback to improve and grow.",
+          "I am able to start tasks without procrastination and persist in the face of difficulties.",
+          "I find ways to stay motivated during monotonous or repetitive tasks.",
+          "I celebrate small victories on the way to achieving bigger goals.",
+          "I am motivated by challenges and often see them as opportunities to grow.",
+          "I maintain a high level of energy towards my commitments.",
+          "I align my activities and goals with my personal values."
+        ]
+      },
+      {
+        "section_title": "Empathy",
+        "questions": [
+          "I can easily put myself in someone else’s shoes and see things from their perspective.",
+          "I recognize and respond appropriately to others’ emotions.",
+          "I show concern for others and act with kindness.",
+          "I understand the dynamics of group emotions and how they influence social interactions.",
+          "I can navigate difficult conversations with sensitivity to others' feelings.",
+          "I am cautious not to impose my own feelings onto others.",
+          "I can distinguish between sympathy and empathy in my interactions.",
+          "I encourage others to share their thoughts and feelings with me.",
+          "I respect cultural differences in emotional expression.",
+          "I recognize when to offer help and when to give others space to process their emotions."
+        ]
+      },
+      {
+        "section_title": "Social Skills",
+        "questions": [
+          "I build and maintain healthy relationships, both personally and professionally.",
+          "I communicate clearly and effectively, ensuring my messages are understood.",
+          "I am skilled at resolving conflicts in a way that respects all parties involved.",
+          "I can influence and inspire others towards a common goal.",
+          "I am comfortable with and effective in working within a team, contributing to its cohesion and productivity.",
+          "I demonstrate active listening skills in conversations.",
+          "I use humor appropriately to lighten the atmosphere and build rapport.",
+          "I manage expectations in relationships and projects effectively.",
+          "I am adept at networking and building connections that are mutually beneficial.",
+          "I provide constructive feedback that fosters growth and positive change."
+        ]
+      
+      }
+    ],
+    "evaluation": "A total score of 120+ indicates high emotional intelligence. 80–119 indicates average EQ. Below 80 suggests focused development is needed. Treat any category at 24/30 or below as a specific area to prioritize."
+  },
+  {
+    "book_number": 7,
+    "book_title": "Self-Awareness and Personal Growth",
+    "quiz_title": "Questionnaire on Self-Awareness and Personal Growth",
+    "instructions": "Read each statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Self-Reflection",
+        "questions": [
+          "I dedicate time to reflect on my personal values and beliefs.",
+          "I regularly assess my strengths and weaknesses.",
+          "I think about the reasons behind my emotional reactions to situations.",
+          "I recognize the impact of my upbringing and experiences on my current behavior.",
+          "I acknowledge when my actions are influenced by biases or stereotypes.",
+          "I consider how my actions affect others.",
+          "I am aware of the personal goals I want to achieve.",
+          "I reflect on my past mistakes and learn from them.",
+          "I identify patterns in my behavior that I would like to change.",
+          "I acknowledge and accept parts of myself that I cannot change."
+        ]
+      },
+      {
+        "section_title": "Emotional Intelligence",
+        "questions": [
+          "I can accurately identify my emotions as I experience them.",
+          "I understand the triggers that lead to my emotional responses.",
+          "I manage my emotions in a healthy way.",
+          "I recognize the impact of my mood on my thoughts and behaviors.",
+          "I use emotional information to guide my decision-making.",
+          "I express my emotions appropriately in various situations.",
+          "I can differentiate between my emotions and the emotions of others.",
+          "I demonstrate empathy toward others.",
+          "I maintain emotional boundaries with others.",
+          "I seek to understand the emotions of others before responding."
+        ]
+      },
+      {
+        "section_title": "Mindfulness and Presence",
+        "questions": [
+          "I practice mindfulness to stay present in the moment.",
+          "I observe my thoughts without judgment.",
+          "I focus on the present rather than dwelling on the past or worrying about the future.",
+          "I engage in activities that promote mindfulness, such as meditation or yoga.",
+          "I recognize when my mind wanders and gently redirect it back to the present.",
+          "I appreciate the small joys and details of daily life.",
+          "I listen actively and fully to others.",
+          "I am aware of my body and its signals.",
+          "I minimize distractions to enhance my focus on current tasks.",
+          "I practice patience and acceptance in situations I cannot control."
+        ]
+      },
+      {
+        "section_title": "Interpersonal Relationships",
+        "questions": [
+          "I understand how my behavior affects my relationships.",
+          "I communicate openly and honestly with others.",
+          "I set healthy boundaries in my relationships.",
+          "I work to resolve conflicts constructively.",
+          "I show appreciation and gratitude towards others.",
+          "I seek meaningful connections rather than superficial interactions.",
+          "I am willing to be vulnerable in close relationships.",
+          "I respect the differences and boundaries of others.",
+          "I contribute positively to the well-being of my relationships.",
+          "I reflect on the role I play in any relationship dynamics."
+        ]
+      },
+      {
+        "section_title": "Growth Mindset",
+        "questions": [
+          "I view challenges as opportunities for growth.",
+          "I believe that I can develop new skills and improve through effort.",
+          "I seek feedback to improve myself, even if it might be uncomfortable.",
+          "I celebrate my progress, not just my achievements.",
+          "I am persistent in pursuing my goals, even after setbacks.",
+          "I adapt my strategies when I encounter obstacles.",
+          "I am curious and open to new experiences.",
+          "I prioritize learning and self-improvement.",
+          "I practice self-compassion when I fail or make mistakes.",
+          "I stay with a difficult task long enough to get past the uncomfortable part."
+        ]
+      }
+    ],
+    "evaluation": "Maximum total score is 150 across 5 sections. 120–150 = High level of self-awareness. 80–119 = Solid working baseline. Below 80 = Self-awareness is not yet a routine practice. Any section under 16/30 represents a priority area for growth."
+  },
+  {
+    "book_number": 8,
+    "book_title": "Balancing Stress and Emotions",
+    "quiz_title": "Quiz on Stress Management and Coping with Emotions",
+    "instructions": "Read each statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Stress Awareness",
+        "questions": [
+          "I recognize the early signs of stress in my body and mind.",
+          "I am aware of the primary sources of stress in my life.",
+          "I know the difference between what is and what is not in my control.",
+          "I know when I need a break to prevent burnout.",
+          "I track my stress levels over time to identify patterns.",
+          "I can identify which aspects of my life contribute the most to my stress levels.",
+          "When I'm stressed, I notice changes in my behavior or mood.",
+          "I understand the impact of stress on my physical health.",
+          "I actively monitor my stress level in response to various life events.",
+          "I am aware of my limits and can recognize when I am close to feeling overwhelmed."
+        ]
+      },
+      {
+        "section_title": "Emotional Regulation",
+        "questions": [
+          "I allow myself to feel my emotions without judgment.",
+          "I use positive self-talk to navigate through negative emotions.",
+          "I can calm myself down when I start to feel overwhelmed.",
+          "I express my feelings in a healthy and constructive way.",
+          "When I need it, I seek emotional support from friends or family.",
+          "I practice mindfulness or meditation to manage my emotions.",
+          "I look for positive experiences or activities to manage negative emotions.",
+          "I use creative means (art, music, writing) to express and process my emotions.",
+          "I can change my emotional state by thinking positively or by reframing situations.",
+          "I recognize the difference between my emotions and my actions and choose to act in ways that do not harm myself or others."
+        ]
+      },
+      {
+        "section_title": "Coping Strategies",
+        "questions": [
+          "I engage in physical activity or exercise to reduce stress.",
+          "I use relaxation techniques like deep breathing or meditation to manage stress.",
+          "I have hobbies or activities that help me relax.",
+          "I maintain a balanced diet and get enough sleep to support my mental health.",
+          "I avoid unhealthy coping mechanisms such as drinking too much or eating for comfort.",
+          "I actively seek social support when dealing with stress or emotional problems.",
+          "I maintain a routine that includes activities that are important to me or bring me joy.",
+          "To manage stress, I engage in relaxation practices such as yoga or deep breathing exercises.",
+          "I prioritize tasks and set boundaries to manage my time and reduce stress.",
+          "I maintain a healthy balance between work, leisure, and social activities."
+        ]
+      },
+      {
+        "section_title": "Problem-Solving Skills",
+        "questions": [
+          "I evaluate stressful situations objectively to identify possible solutions.",
+          "I break problems down into manageable steps to deal with them effectively.",
+          "I look for help or resources when I face challenges that are beyond my abilities.",
+          "I remain proactive in dealing with potential stressors before they escalate.",
+          "I am able to adapt my strategies if initial solutions do not work.",
+          "I approach problems with calm and clear thinking and focus on solutions.",
+          "I can distinguish between problems that I can solve and those that I cannot influence.",
+          "I anticipate and mitigate stressors through strategic planning.",
+          "When there's a problem, I seek alternative perspectives.",
+          "I am aware of the importance of compromise in resolving conflicts and reducing stress."
+        ]
+      },
+      {
+        "section_title": "Support System",
+        "questions": [
+          "I have a support network that I can rely on when times are tough.",
+          "I communicate my needs clearly to others when seeking support.",
+          "I am open to advice and help from loved ones.",
+          "I offer support to others when they are going through stressful periods.",
+          "I value and nurture relationships that provide emotional strength and comfort.",
+          "I am happy to turn to professional resources (therapists, counselors) when necessary.",
+          "I participate in community or group activities that provide support and a sense of belonging.",
+          "I communicate openly about my struggles with my support network without feeling like a burden.",
+          "I appreciate and reciprocate support in my relationships, which creates a strong mutual support system.",
+          "I am proactive in building and maintaining relationships that positively contribute to my emotional well-being."
+        ]
+      }
+    ],
+    "evaluation": "Maximum total score is 150. 120–150 = Strong stress management skills. 80–119 = Solid working level. Below 80 = Stress management practices need deliberate building. Any section below 16/30 represents your vulnerable stress response link."
+  },
+  {
+    "book_number": 9,
+    "book_title": "Building and Maintaining Relationships",
+    "quiz_title": "Questionnaire for Self-Assessment on Building Relationships",
+    "instructions": "Read each statement. Rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Openness",
+        "questions": [
+          "I share my thoughts and feelings openly with my partner or friends.",
+          "I am willing to try new activities or ideas suggested by my partner or friends.",
+          "I am open to constructive criticism and feedback.",
+          "I discuss my needs and desires honestly.",
+          "I encourage my partner or friends to share their thoughts and feelings with me.",
+          "I actively seek out new experiences with my partner or friends.",
+          "I am comfortable discussing difficult topics.",
+          "I listen without judgment when others express their vulnerabilities.",
+          "I admit when I am wrong or do not know something.",
+          "I share both my successes and failures with those close to me."
+        ]
+      },
+      {
+        "section_title": "Communication",
+        "questions": [
+          "I ensure clarity in my communication, avoiding misunderstandings.",
+          "I listen more than I speak in conversations.",
+          "I express appreciation and gratitude regularly.",
+          "I address issues or conflicts directly and constructively.",
+          "I use “I” statements to express my feelings without blaming.",
+          "I provide support and encouragement through my words.",
+          "I keep my partner or friends informed about important aspects of my life.",
+          "I am adept at reading the mood of my partner or friends and adjust my communication accordingly.",
+          "I avoid using absolute terms like \"always\" or \"never\" during disagreements.",
+          "I make time for uninterrupted conversations."
+        ]
+      },
+      {
+        "section_title": "Respect",
+        "questions": [
+          "I show respect for my partner or friends' boundaries.",
+          "I value and respect the opinions of my partner or friends, even when we disagree.",
+          "I respect my partner or friends' need for personal space and time.",
+          "I acknowledge and show appreciation for my partner or friends' contributions to our relationship.",
+          "I practice patience and understanding.",
+          "I recognize and respect differences in our interests and hobbies.",
+          "I consult my partner or friends before making decisions that affect them.",
+          "I honor commitments and promises.",
+          "I treat my partner or friends' belongings and personal space with care.",
+          "I speak respectfully of and to my partner or friends at all times."
+        ]
+      },
+      {
+        "section_title": "Empathy",
+        "questions": [
+          "I strive to understand the perspective of my partner or friends.",
+          "I am sensitive to the emotional state of those around me.",
+          "I offer support during difficult times.",
+          "I celebrate the successes of my partner or friends as if they were my own.",
+          "I make an effort to comfort my partner or friends when needed.",
+          "I can identify and acknowledge the feelings of others without them having to explicitly tell me.",
+          "I remain patient and compassionate during disagreements.",
+          "I make an effort to mend misunderstandings or hurt feelings.",
+          "I recognize the impact of my actions and words on others.",
+          "I provide a safe space for my partner or friends to express themselves."
+        ]
+      },
+      {
+        "section_title": "Trustworthiness",
+        "questions": [
+          "I am consistent in my actions and behaviors.",
+          "I keep confidential information shared with me in confidence.",
+          "I follow through on my commitments and promises.",
+          "I am honest, even when it is difficult.",
+          "My actions align with my words.",
+          "I admit my mistakes and work to correct them.",
+          "I avoid making assumptions and seek clarification when in doubt.",
+          "I trust my partner or friends until given a reason not to.",
+          "I support my partner or friends' autonomy and decision-making.",
+          "I do not misuse the trust my partner or friends place in me."
+        ]
+      }
+    ],
+    "evaluation": "Maximum total score is 150. 120–150 = Deliberate relationship nurture. 80–119 = Working level; skills may strain under pressure. Below 80 = Relational maintenance requires intentional effort. Focus first on any section scoring under 16/30."
+  },
+  {
+    "book_number": 10,
+    "book_title": "Motivation and Goal Setting",
+    "quiz_title": "Self-Assessment on Motivation and Goal Setting",
+    "instructions": "Read each statement and rate yourself on a scale of 1 to 3 where 1 = rarely, 2 = sometimes, 3 = often.",
+    "sections": [
+      {
+        "section_title": "Goal Clarity",
+        "questions": [
+          "I have a clear understanding of my personal and professional goals.",
+          "I set specific, measurable, attainable, relevant, and time-bound goals.",
+          "I write down my goals to visually track my progress.",
+          "I regularly review and adjust my goals to reflect my current priorities.",
+          "I break down my long-term goals into manageable, short-term tasks.",
+          "I can visualize the results of achieving my goals.",
+          "I understand why my goals matter to me on a deeper level.",
+          "I communicate my goals to others to gain support and accountability.",
+          "I prioritize my goals daily and focus on what will bring me closer to achieving them.",
+          "I am confident in my ability to achieve my goals."
+        ]
+      },
+      {
+        "section_title": "External Support and Resources",
+        "questions": [
+          "I actively seek advice and mentoring to help me achieve my goals.",
+          "I surround myself with people who support and motivate me.",
+          "I use tools and resources that facilitate progress toward my goals.",
+          "I am open to feedback and use it constructively to improve my approach.",
+          "I participate in communities or groups with similar interests and goals.",
+          "I am ready to invest time and resources in my personal development.",
+          "I share my goals and progress with others to create a sense of accountability.",
+          "I am aware of the importance of connection and cooperation in achieving goals.",
+          "I'm not afraid to ask for help when I need it.",
+          "I use my strengths and try to improve my weaknesses."
+        ]
+      },
+      {
+        "section_title": "Persistence and Consistency",
+        "questions": [
+          "I consistently work towards my goals, even on difficult days.",
+          "I maintain focus on my goals, avoiding distractions.",
+          "I show resilience by bouncing back from setbacks quickly.",
+          "I practice discipline in my daily habits to support my goals.",
+          "I adjust my strategies if something isn’t working, rather than giving up.",
+          "I commit to my goals for the long term, understanding that success takes time.",
+          "I use setbacks as learning opportunities to improve my approach.",
+          "I seek out resources and support when faced with obstacles.",
+          "I celebrate small successes as part of the journey towards larger goals.",
+          "I consistently review my progress and reassess my methods."
+        ]
+      },
+      {
+        "section_title": "Intrinsic Motivation",
+        "questions": [
+          "I find personal satisfaction in pursuing my goals, beyond external rewards.",
+          "I engage in activities that I find challenging and fulfilling.",
+          "I seek out opportunities for growth and learning.",
+          "My motivation comes from a desire to improve myself or my situation.",
+          "I remain motivated even when progress is slow or not immediately visible.",
+          "I reflect on my achievements to boost my motivation.",
+          "I maintain a positive outlook towards achieving my goals.",
+          "I am resilient in the face of setbacks and challenges.",
+          "My goals reflect my authentic self and not what others expect of me.",
+          "I would keep working on this goal even if nobody ever knew I had."
+        ]
+      },
+      {
+        "section_title": "Adaptability and Flexibility",
+        "questions": [
+          "I am flexible in adjusting my goals as my circumstances or interests change.",
+          "Uncertainty suits me and I adjust my plans accordingly.",
+          "I experiment with different strategies to find what works best for me.",
+          "I remain open to new methods or approaches to achieving my goals.",
+          "I balance persistence with the ability to pivot when needed.",
+          "I recognize when a goal no longer serves me and I am ready to let it go.",
+          "I adjust my timeline for achieving goals based on realistic assessments of progress.",
+          "I manage my expectations to stay motivated even when I face delays.",
+          "I am creative in overcoming obstacles and finding solutions.",
+          "I maintain a positive attitude towards change and see it as an opportunity for growth."
+        ]
+      }
+    ],
+    "evaluation": "Maximum total score is 150 across 5 sections. 120–150 = Active motivation management. 80–119 = Solid working level; pay attention to persistence in weeks 3+. Below 80 = Goal-setting structure requires core reinforcement. Target any domain below 16/30."
+  }
+];
+
+        let currentQuizIndex = null;
+        let currentAnswers = {}; // key: "sX_qY", val: 1 | 2 | 3
+        let userHistory = {}; // store past scores in memory
+
+        // Calculate total questions in a quiz
+        function getQuizQuestionCount(quiz) {
+            return quiz.sections.reduce((acc, sec) => acc + sec.questions.length, 0);
+        }
+
+        // Calculate maximum score for a quiz
+        function getQuizMaxScore(quiz) {
+            return getQuizQuestionCount(quiz) * 3;
+        }
+
+        // Initialize UI on window load
+        window.onload = function() {
+            renderHub();
+            renderOverviewTable();
+        };
+
+        // Render Quiz Directory Cards
+        function renderHub() {
+            const grid = document.getElementById('quizCardsGrid');
+            grid.innerHTML = '';
+
+            quizDatabase.forEach((quiz, index) => {
+                const totalQ = getQuizQuestionCount(quiz);
+                const maxScore = getQuizMaxScore(quiz);
+                const history = userHistory[quiz.book_number];
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group";
+                
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">
+                                Book ${quiz.book_number}
+                            </span>
+                            ${history ? `
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i> ${history.totalScore}/${maxScore}
+                                </span>
+                            ` : `
+                                <span class="text-xs text-slate-400 font-medium">Not Taken</span>
+                            `}
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base group-hover:text-blue-600 transition leading-snug">
+                                ${quiz.book_title}
+                            </h3>
+                            <p class="text-xs font-semibold text-slate-500 mt-0.5">${quiz.quiz_title}</p>
+                        </div>
+
+                        <!-- Sections Tags -->
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                            ${quiz.sections.map(s => `
+                                <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-medium">
+                                    ${s.section_title} (${s.questions.length})
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs text-slate-400 font-medium">
+                            <i class="fa-regular fa-clock mr-1"></i>~${Math.ceil(totalQ * 0.2)} mins
+                        </span>
+                        <button onclick="startQuiz(${index})" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs shadow-sm transition flex items-center space-x-1.5">
+                            <span>${history ? 'Retake Quiz' : 'Start Test'}</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function startQuiz(index) {
+            currentQuizIndex = index;
+            currentAnswers = {};
+            const quiz = quizDatabase[index];
+
+            document.getElementById('testBookBadge').textContent = `Book ${quiz.book_number}`;
+            document.getElementById('testQuestionCountBadge').textContent = `${getQuizQuestionCount(quiz)} Questions`;
+            document.getElementById('testTitle').textContent = quiz.quiz_title;
+            document.getElementById('testInstructions').textContent = quiz.instructions;
+
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            quiz.sections.forEach((section, sIdx) => {
+                const secEl = document.createElement('div');
+                secEl.className = "bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm";
+                
+                secEl.innerHTML = `
+                    <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-7 h-7 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center">
+                                ${sIdx + 1}
+                            </span>
+                            <h3 class="font-bold text-slate-900 text-base">${section.section_title}</h3>
+                        </div>
+                        <span class="text-xs text-slate-400 font-medium">${section.questions.length} Items</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        ${section.questions.map((qText, qIdx) => {
+                            const qKey = `s${sIdx}_q${qIdx}`;
+                            return `
+                                <div id="card_${qKey}" class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition space-y-3">
+                                    <div class="flex items-start space-x-3">
+                                        <span class="text-xs font-bold text-slate-400 mt-0.5">${qIdx + 1}.</span>
+                                        <p class="text-sm font-medium text-slate-800 flex-grow">${qText}</p>
+                                    </div>
+
+                                    <!-- Rating Buttons Group -->
+                                    <div class="grid grid-cols-3 gap-2 sm:w-80 ml-auto pt-1">
+                                        <button type="button" onclick="selectAnswer('${qKey}', 1)" id="btn_${qKey}_1" class="quiz-pill border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-semibold py-1.5 px-2 rounded-lg text-xs transition text-center">
+                                            1 - Rarely
+                                        </button>
+                                        <button type="button" onclick="selectAnswer('${qKey}', 2)" id="btn_${qKey}_2" class="quiz-pill border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-semibold py-1.5 px-2 rounded-lg text-xs transition text-center">
+                                            2 - Sometimes
+                                        </button>
+                                        <button type="button" onclick="selectAnswer('${qKey}', 3)" id="btn_${qKey}_3" class="quiz-pill border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-semibold py-1.5 px-2 rounded-lg text-xs transition text-center">
+                                            3 - Often
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                container.appendChild(secEl);
+            });
+
+            updateProgress();
+
+            document.getElementById('hubView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('hidden');
+            document.getElementById('testView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Selection answer handler
+        function selectAnswer(qKey, val) {
+            currentAnswers[qKey] = val;
+
+            // Highlight buttons
+            for (let v = 1; v <= 3; v++) {
+                const btn = document.getElementById(`btn_${qKey}_${v}`);
+                if (btn) {
+                    if (v === val) {
+                        btn.className = "quiz-pill border-2 border-blue-600 bg-blue-600 text-white font-bold py-1.5 px-2 rounded-lg text-xs shadow-sm transition text-center";
+                    } else {
+                        btn.className = "quiz-pill border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 font-medium py-1.5 px-2 rounded-lg text-xs transition text-center opacity-60";
+                    }
+                }
+            }
+
+            // Remove error highlight if present
+            const card = document.getElementById(`card_${qKey}`);
+            if (card) {
+                card.classList.remove('border-red-400', 'bg-red-50/30');
+            }
+
+            updateProgress();
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const quiz = quizDatabase[currentQuizIndex];
+            const totalQ = getQuizQuestionCount(quiz);
+            const answeredCount = Object.keys(currentAnswers).length;
+            const pct = Math.round((answeredCount / totalQ) * 100);
+
+            document.getElementById('progressBar').style.width = `${pct}%`;
+            document.getElementById('progressText').textContent = `${answeredCount} of ${totalQ} answered (${pct}%)`;
+
+            const alertEl = document.getElementById('footerUnansweredAlert');
+            if (answeredCount === totalQ) {
+                alertEl.textContent = "All questions answered! Ready to calculate results.";
+                alertEl.className = "text-emerald-600 font-semibold";
+            } else {
+                alertEl.textContent = `Ensure all questions are answered (${totalQ - answeredCount} remaining).`;
+                alertEl.className = "text-slate-500";
+            }
+        }
+
+        // Quick Auto-fill for testing/demo
+        function autoFillSampleData() {
+            const quiz = quizDatabase[currentQuizIndex];
+            quiz.sections.forEach((section, sIdx) => {
+                section.questions.forEach((_, qIdx) => {
+                    const qKey = `s${sIdx}_q${qIdx}`;
+                    // Generate realistic balanced answers weighted towards 2 & 3
+                    const val = Math.random() < 0.2 ? 1 : Math.random() < 0.5 ? 2 : 3;
+                    selectAnswer(qKey, val);
+                });
+            });
+        }
+
+        // Reset current test answers
+        function resetCurrentQuiz() {
+            currentAnswers = {};
+            startQuiz(currentQuizIndex);
+        }
+
+        function handleQuizSubmit(event) {
+            event.preventDefault();
+            const quiz = quizDatabase[currentQuizIndex];
+            const totalQ = getQuizQuestionCount(quiz);
+            const answeredKeys = Object.keys(currentAnswers);
+
+            if (answeredKeys.length < totalQ) {
+                // Highlight unanswered items
+                let firstUnansweredCard = null;
+                quiz.sections.forEach((section, sIdx) => {
+                    section.questions.forEach((_, qIdx) => {
+                        const qKey = `s${sIdx}_q${qIdx}`;
+                        if (!currentAnswers[qKey]) {
+                            const card = document.getElementById(`card_${qKey}`);
+                            if (card) {
+                                card.classList.add('border-red-400', 'bg-red-50/30');
+                                if (!firstUnansweredCard) firstUnansweredCard = card;
+                            }
+                        }
+                    });
+                });
+
+                if (firstUnansweredCard) {
+                    firstUnansweredCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+
+            // Calculate Section Scores
+            let grandTotal = 0;
+            const sectionResults = [];
+
+            quiz.sections.forEach((sec, sIdx) => {
+                let secScore = 0;
+                sec.questions.forEach((_, qIdx) => {
+                    const qKey = `s${sIdx}_q${qIdx}`;
+                    secScore += (currentAnswers[qKey] || 0);
+                });
+
+                const maxSecScore = sec.questions.length * 3;
+                const ratio = secScore / maxSecScore;
+                grandTotal += secScore;
+
+                sectionResults.push({
+                    title: sec.section_title,
+                    score: secScore,
+                    maxScore: maxSecScore,
+                    ratio: ratio,
+                    isLow: ratio < 0.60
+                });
+            });
+
+            // Save in memory
+            userHistory[quiz.book_number] = {
+                totalScore: grandTotal,
+                maxScore: getQuizMaxScore(quiz),
+                date: new Date().toLocaleDateString()
+            };
+
+            renderResultsView(quiz, grandTotal, sectionResults);
+            renderHub(); // Refresh status badges
+            renderOverviewTable();
+        }
+
+        function renderResultsView(quiz, grandTotal, sectionResults) {
+            const maxScore = getQuizMaxScore(quiz);
+            const ratio = grandTotal / maxScore;
+            const ratioPct = Math.round(ratio * 100);
+
+            document.getElementById('resBookBadge').textContent = `Book ${quiz.book_number}`;
+            document.getElementById('resQuizTitle').textContent = quiz.quiz_title;
+            document.getElementById('resDate').textContent = `Completed ${new Date().toLocaleDateString()}`;
+            document.getElementById('resTotalScore').textContent = grandTotal;
+            document.getElementById('resMaxScore').textContent = `/ ${maxScore}`;
+            document.getElementById('resPercentageBar').style.width = `${ratioPct}%`;
+            document.getElementById('resRatioPct').textContent = `${ratioPct}%`;
+
+            // Performance Tier Determination
+            const statusBadge = document.getElementById('resStatusBadge');
+            const tierSummary = document.getElementById('resTierSummary');
+            const tierDesc = document.getElementById('resTierDescription');
+
+            if (ratio >= 0.80) {
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800";
+                statusBadge.textContent = "High Skill Standard";
+                tierSummary.textContent = "High application of core psychological skills.";
+                tierDesc.textContent = "Your total score reflects strong, established habits across evaluated dimensions.";
+            } else if (ratio >= 0.55) {
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800";
+                statusBadge.textContent = "Developing Baseline";
+                tierSummary.textContent = "Solid foundation with variable consistency.";
+                tierDesc.textContent = "You notice patterns and hold key competencies, but implementation may fluctuate under pressure.";
+            } else {
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800";
+                statusBadge.textContent = "Focus Required";
+                tierSummary.textContent = "Competencies require deliberate practice.";
+                tierDesc.textContent = "Key behaviors are not yet regular habits. Focus initial efforts on low-scoring domains.";
+            }
+
+            // Identify Lowest Scoring Section
+            const sortedSections = [...sectionResults].sort((a, b) => a.ratio - b.ratio);
+            const lowestSec = sortedSections[0];
+
+            document.getElementById('resPriorityText').innerHTML = `Focus on <strong>${lowestSec.title}</strong> (${lowestSec.score}/${lowestSec.maxScore} - ${Math.round(lowestSec.ratio * 100)}%), which represents your primary growth area.`;
+
+            // Render Section Breakdown Cards
+            const secGrid = document.getElementById('sectionScoresGrid');
+            secGrid.innerHTML = '';
+
+            sectionResults.forEach(s => {
+                const pct = Math.round(s.ratio * 100);
+                const isFlagged = s.isLow;
+
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border ${isFlagged ? 'border-amber-300 bg-amber-50/40' : 'border-slate-200 bg-slate-50/50'} space-y-2`;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-800">
+                        <span class="flex items-center space-x-1.5">
+                            ${isFlagged ? '<i class="fa-solid fa-flag text-amber-600"></i>' : '<i class="fa-solid fa-check text-emerald-600"></i>'}
+                            <span>${s.title}</span>
+                        </span>
+                        <span>${s.score} / ${s.maxScore} (${pct}%)</span>
+                    </div>
+
+                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                        <div class="h-2 rounded-full ${s.ratio >= 0.8 ? 'bg-emerald-500' : s.ratio >= 0.6 ? 'bg-blue-500' : 'bg-amber-500'}" style="width: ${pct}%"></div>
+                    </div>
+
+                    <div class="flex justify-between text-[11px] text-slate-500 font-medium pt-0.5">
+                        <span>Target: ≥60% (${Math.ceil(s.maxScore * 0.6)} pts)</span>
+                        <span>${s.ratio >= 0.8 ? 'Strength' : s.ratio >= 0.6 ? 'Developing' : 'Needs Focus'}</span>
+                    </div>
+                `;
+                secGrid.appendChild(card);
+            });
+
+            // Set Official Evaluation Text
+            document.getElementById('resOfficialEvaluationText').textContent = quiz.evaluation;
+
+            document.getElementById('testView').classList.add('hidden');
+            document.getElementById('resultsView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Navigation Views Toggle
+        function showHubView() {
+            document.getElementById('testView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('hidden');
+            document.getElementById('hubView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function retakeCurrentQuiz() {
+            if (currentQuizIndex !== null) {
+                startQuiz(currentQuizIndex);
+            }
+        }
+
+        // Overview Matrix Modal Controls
+        function openOverviewModal() {
+            document.getElementById('overviewModal').classList.remove('hidden');
+        }
+
+        function closeOverviewModal() {
+            document.getElementById('overviewModal').classList.add('hidden');
+        }
+
+        function renderOverviewTable() {
+            const tbody = document.getElementById('overviewTableBody');
+            tbody.innerHTML = '';
+
+            quizDatabase.forEach((quiz, idx) => {
+                const totalQ = getQuizQuestionCount(quiz);
+                const maxScore = getQuizMaxScore(quiz);
+                const history = userHistory[quiz.book_number];
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-900">Book ${quiz.book_number}</td>
+                    <td class="p-3">
+                        <div class="font-bold text-slate-800">${quiz.book_title}</div>
+                        <div class="text-[11px] text-slate-500">${quiz.quiz_title}</div>
+                    </td>
+                    <td class="p-3">${quiz.sections.length} Sections</td>
+                    <td class="p-3 font-semibold text-slate-700">${totalQ} Qs</td>
+                    <td class="p-3 font-semibold text-slate-700">${maxScore} pts</td>
+                    <td class="p-3">
+                        ${history ? `
+                            <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[11px]">
+                                ${history.totalScore} / ${maxScore}
+                            </span>
+                        ` : `
+                            <button onclick="closeOverviewModal(); startQuiz(${idx});" class="text-blue-600 font-bold hover:underline">
+                                Take Test
+                            </button>
+                        `}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
